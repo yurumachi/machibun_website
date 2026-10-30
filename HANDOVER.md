@@ -71,7 +71,7 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
 10. （済み、2026-10-17）一覧が空のとき、トップページに「お知らせはまだありません」「決まり次第お知らせします」の文を出す（`web/src/pages/index.astro`）。本番の見本を消したので、本番は今この表示になっている。
 11. （済み、2026-10-17）本番の公開サイトに Cloudflare Web Analytics を入れた（クレジットカードは要らなかった）。`cf rum site-info create` で作ったサイト（host は `machibun2026.yurumachi-yuruyuru.workers.dev`）の beacon を、`WORKERS_CI_BRANCH` が `main` のビルドにだけ入れる（`web/src/layouts/Base.astro`）。数は Cloudflare の画面の Web Analytics で見る。`machibun2026` の Workers Logs は、Worker のコードが無く静的なファイルだけなので、有効にしてもほとんど残らないと考えて入れていない。
 12. （2026-10-17）管理画面を最初から日本語で出す。EmDash は Cookie `emdash-locale` → ブラウザの言語 → 英語 の順で言語を選ぶので、`cms/src/middleware.ts` で、Cookie が無い人に `emdash-locale=ja` を付けて開き直させる。画面で英語を選んだ人の Cookie はそのまま使う。
-13. トップページの時間「16:00〜21:00」は、まだ決まっていない（user、2026-10-17）。今は直さない。アクセス「JR長岡駅 大手口から徒歩5分」は、新潟県の観光情報サイトの「徒歩約5分」と合っていた。
+13. （2026-10-30）トップページの時間を「14:00〜19:00」にした（user）。アクセス「JR長岡駅 大手口から徒歩5分」は、新潟県の観光情報サイトの「徒歩約5分」と合っていた。
 14. （2026-10-17、`feat/worktree-dev`）作業を worktree で並べられるようにした。
    - `.worktreeinclude`: Orca で worktree を作ると `cms/.env` と `web/.env` が写る。Orca はこの一覧を、登録した元の checkout から読むので、`main` に入ってから効く。素の `git worktree add` では写らない。 手元の CMS の DB（`cms/.wrangler/`）は写らず、新しい worktree では空から作られる。`web/.env` の `CMS_TOKEN` は元の DB で作ったものなので、その worktree の管理画面で作り直す（PR #16 のレビューの指摘。EmDash は token を DB に登録して照合する）。
    - `compose.yaml`: entrypoint で、起動のたびに cms と web の `pnpm install --prefer-offline` を流す。worktree の新しい volume は空なので。入っていれば 1 秒ほどで終わる。`exec` は entrypoint を通らない。

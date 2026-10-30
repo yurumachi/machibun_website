@@ -10,7 +10,7 @@ interface Props {
 
 const siteTitle = "まちナかぶんかさい";
 const fullTitle = Astro.props.title ? `${Astro.props.title}｜${siteTitle}` : siteTitle;
-const description = Astro.props.description ?? "夜のマルシェとまちの踊り場。2026年11月14日（土）16:00〜21:00、長岡の米百俵プレイス ミライエ長岡で開く、まちなかの文化祭。";
+const description = Astro.props.description ?? "夜のマルシェとまちの踊り場。2026年11月14日（土）14:00〜19:00、長岡の米百俵プレイス ミライエ長岡で開く、まちなかの文化祭。";
 // Preview にも入れる方法は採らない。Preview を見た数が本番の訪問者の数に混ざるため。
 // beacon に integrity を付ける方法も採らない。Cloudflare が版を付けずに中身を更新するので、付けると読み込めなくなる
 const analytics = process.env.WORKERS_CI_BRANCH === "main";
