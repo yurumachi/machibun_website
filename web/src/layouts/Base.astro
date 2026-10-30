@@ -10,7 +10,7 @@ interface Props {
 
 const siteTitle = "まちナかぶんかさい";
 const fullTitle = Astro.props.title ? `${Astro.props.title}｜${siteTitle}` : siteTitle;
-const description = Astro.props.description ?? "夜のマルシェとまちの踊り場。2026年11月14日（土）16:00〜21:00、長岡の米百俵プレイス ミライエ長岡で開く、まちなかの文化祭。";
+const description = Astro.props.description ?? "夜のマルシェとまちの踊り場。2026年11月14日（土）14:00〜19:00、長岡の米百俵プレイス ミライエ長岡で開く、まちなかの文化祭。";
 // Preview にも入れる方法は採らない。Preview を見た数が本番の訪問者の数に混ざるため。
 // beacon に integrity を付ける方法も採らない。Cloudflare が版を付けずに中身を更新するので、付けると読み込めなくなる
 const analytics = process.env.WORKERS_CI_BRANCH === "main";
@@ -26,7 +26,8 @@ const analytics = process.env.WORKERS_CI_BRANCH === "main";
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<!-- Astro の Fonts API で自前で配る方法は採らない。@font-face が全ページの HTML に埋め込まれ、HTML が gzip で 4KB から 67KB に増えるため -->
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+		<!-- media="print" で読ませて onload で切り替える方法は採らない。フォントが最初の描画より前に読み終わり、Lighthouse がその約 600KB を FCP の待ちに数えるため -->
+		<script is:inline>requestAnimationFrame(() => setTimeout(() => document.head.append(Object.assign(document.createElement("link"), { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" }))));</script>
 		<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" /></noscript>
 		<link rel="preload" as="image" href="/assets/logo.svg" />
 		{analytics && <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "ed0da885575a40b182ae2602ab7977be"}'></script>}
