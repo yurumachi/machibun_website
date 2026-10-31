@@ -42,6 +42,7 @@ export function createPlugin() {
 			},
 			"content:beforePublish": guardPublish,
 			"content:beforeUnpublish": guardPublish,
+			"content:beforeSchedule": guardPublish,
 		},
 	});
 }
