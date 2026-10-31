@@ -97,8 +97,18 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
 
 17. （2026-10-18、`feat/share-and-search`）共有と検索のための設計を `docs/notes/share-and-search.md` に書いた（favicon・共有の画像（OGP）・canonical と `noindex`・sitemap）。Codex（labteam）の設計のレビューを受けて直した。イベントの構造化データは、Google の表示が日本に対応していないので入れない。次の順で進める。
    1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
-   2. （2026-11-01）設計どおりに実装した。このブランチの PR で `preview` に取り込み、Preview で確かめる（設計の「確かめ方」）。Cloudflare が自動で付ける robots.txt の content signal と、自前の `web/public/robots.txt` が合わさるかも、Preview で確かめる。
-   3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。（PR #22 は 2026-10-31 に本番に入れ、#2 を閉じた。）
+   2. （済み、2026-11-01）PR #26 で `preview` に取り込んだ。Preview で、favicon・アイコン・共有の画像・sitemap・robots.txt が 200 で返り、`noindex` が入ることを確かめた。robots.txt は、Cloudflare の content signal の後ろに自前の行が続く。
+   3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。イラストの直し（PR #25）も一緒に本番に入るので、本番で PageSpeed を測り、#3 を閉じる。
+18. （2026-11-01、`feat/admin-guard`）実行委員（Editor）は今の年の中身だけを扱い、今の年・カテゴリ・ステージと前の年の中身は変えられないようにした（ADR 0008）。プラグイン `cms/src/plugins/admin-guard.ts` と `cms/src/middleware.ts`。
+   - 手元で、画面から実行委員と管理者の操作を確かめた。項目と結果は `docs/notes/admin-guard-checks.md`。EmDash を上げたときは、これを流す。
+   - 絞り込みは `next()` に URL や Request を渡しても EmDash に届かなかった（一覧の API が `context.url` を読む）。`context.url` に `fieldFilters` を足している。
+   - 複製は保存のフックを通らないので、実行委員の複製は `middleware.ts` で断る。
+   - 前の年の中身の削除・完全な削除・復元は、管理者だけができる。削除のフックには操作した人が渡らず、復元にはフックが無いので、`middleware.ts` で実行委員を断る。
+   - MCP は同じ Worker の `/_emdash/api/mcp` で動き、`middleware.ts` を通る。実行委員の MCP は一律に断る。管理者の MCP での保存には操作した人が渡り、前の年の中身も直せる。
+   - 版の復元（`/_emdash/api/revisions/<id>/restore`）は保存のフックを通らないので、実行委員が前の年の中身に行うものは `middleware.ts` で断る。予約公開はプラグインの `content:beforeSchedule` で断る。
+   - 年が変わるときに直す場所は3つある。プラグインの設定の今の年、各コレクションの年の項目の既定値（2026）、`web/src/lib/cms.ts` の `YEAR`。1つにまとめるかは決まっていない（「決まっていないこと」）。
+   - 管理画面の一覧には年で絞る仕組みが無く、前の年と今の年の中身が同じ一覧に並ぶ（「決まっていないこと」）。
+   - `preview` での確認: 管理者で、プラグインの設定に今の年が出ることを確かめる。実行委員のアカウントは Preview に無いので、実行委員の操作は手元でだけ確かめた。
 
 ## いまの状態
 
@@ -163,3 +173,5 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
 
 - 協賛のランク・見せ方・広告との分け方（`docs/content-model.md`）。
 - 管理画面の入口を Cloudflare Access で絞るか（公開サイトの Preview にかけることは決めた。Zero Trust の申し込みでクレジットカードが要るので止めている。9 の 6）。
+- 今の年を1か所で決めるか（18）。いまはプラグインの設定・年の項目の既定値・`web` の `YEAR` の3か所を、年が変わるときに管理者がそろえる。`web` が CMS からプラグインの設定を読むには管理者の権限の token が要る。
+- 管理画面の一覧で、前の年と今の年の中身をどう分けて見せるか（18）。EmDash 1.3.0 の一覧には項目で絞る画面が無い。候補は、年で並べる、コレクションの `group` でまとめる、プラグインの管理ページに前の年の一覧を出す。
