@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://machibun2026.yurumachi-yuruyuru.workers.dev/sitemap-index.xml

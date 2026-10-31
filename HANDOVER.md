@@ -57,6 +57,8 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    - 点の測り直しは PageSpeed の画面（pagespeed.web.dev）で行う。API（`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=<URL>&strategy=mobile`）は、key が無いと共有の1日の上限に当たって断られた（2026-10-17）。本番は一覧が空、Preview には試しのデータがあるので、比べるときは同じ環境の前後で比べる。
    - 取り込む前の Preview（2026-10-17 17:50、Lighthouse 13.5.0）: モバイル 66 点（FCP 5.3s・LCP 5.4s・CLS 0、表示を止める読み込みの見込みの短縮 5,250ms）、デスクトップ 95 点（FCP 1.1s・CLS 0.001）。取り込んだ後に同じ画面で測り、FCP と CLS を比べる。
    - （2026-10-17、`feat/illust-resize`）イラスト（#3）: `web/public/assets/illust/` を `web/src/assets/illust/` に移し、`astro:assets` の `<Image>` で、CSS で出す最大の幅（px）の 1 倍と 2 倍に縮める（`densities`）。CSS の幅を変えたら `index.astro` の `width` も変える。全体の `layout: "constrained"` の CSS が位置の指定とぶつからないよう、イラストは `layout="none"` にした。一番大きい talk は 640px・24KB から、224px・8KB と 448px・21KB になった。取り込む前の Preview の「Improve image delivery」は、モバイル 39KiB、デスクトップ 65KiB（2026-10-17 17:50）。
+   - （2026-10-18、PR #22。2026-10-30 に `main` に入れた）FCP が縮まらなかった原因は、フォントだった。Lighthouse の計算（Lantern、devtools-frontend の `lantern/metrics/FirstContentfulPaint.ts`）は、最初の描画より前に読み終わった優先度 VeryHigh の読み込みを、描画を止めたものとして数える。`media="print"` の形ではフォント（約 600KB）が描画より前に読み終わる回があり、そのとき FCP が 5.3s になっていた。フォントの CSS を、最初の描画の後（`requestAnimationFrame` から `setTimeout`）に script で足す形にした（`Base.astro`）。Preview のモバイルは 99〜100 点（FCP 0.9〜1.4s）になった。同じ時間帯の本番（前の形）は 67 点と 95 点で、フォントが描画より前に読み終わった回だけ 5.3s だった。実際の利用者の FCP は前から速く（手元の Chrome で 0.1〜0.2s）、上がったのは主に測定の点。手元のコンテナの Lighthouse では、どちらの形でも描画が先で再現しない。
+   - PageSpeed を agent-browser で回すときは、新しいタブ（`tab new`）で開く。裏のタブでは結果が描かれない。結果の JSON はページの `window.__LIGHTHOUSE_MOBILE_JSON__` で読める。
    - （2026-10-31、本番）フォントを描画の後に読む形（PR #22）を本番に入れて、モバイルを測った。2回とも FCP は 0.8s。1回は 100 点、もう1回は 78 点（LCP 5.6s）。78 点の回は描画が 2.4s と遅く、フォントがその前に読み終わっていて、計算上の LCP にフォントが数えられた（FCP と同じ仕組み）。デスクトップは 99 点。PageSpeed は同じ URL を続けて測ると、同じ結果を返すことがある（3回続けて同じ数値だった）。
    - （2026-10-31、`feat/illust-sizes`）スマホで CSS の幅が狭くなる cheers（104px）と balloons（64px）は、`densities` だとスマホの 1.75 倍の画面に 2 倍の画像（cheers は 384px・19KB）が配られ、本番の「Improve image delivery」に残っていた。この2つは `widths` と `sizes` で、スマホとそれ以外の幅をそれぞれ書く形にした。CSS の幅を変えたら `sizes` も変える。
 9. （2026-10-17 に決めた。6 の Access のほかは済んだ）作業は feat → `preview` → `main` の順に取り込み、Preview は `preview` ブランチの1組（管理画面 `preview-machibun-cms` と公開サイト `preview-machibun2026`）だけにする（ADR 0007）。Preview の CMS の Hook が1つのブランチしかビルドし直せないため。次の順で設定する。Cloudflare と GitHub の設定を変える前と、消す前には user に確かめる。
@@ -92,6 +94,11 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    - `previews_base_config` は、本番用でないビルドの設定がある間は変えられない（画面でも `cf builds workers update` でも、エラーを出さずに元のまま）。有効にするときに同じ依頼で送ると保存され、`cf` で作った Preview 用の設定があると `[12048] Cannot enable preview settings while a non-production trigger exists` で断られる。`machibun-cms` のベースは、Preview 用の設定を消し、`{"previews_enabled":true,"previews_base_config":{…}}` を送ってから、オフに戻して直した（root `/cms`、`preview` の条件付きのコマンド、`cms/*`）。その後に Preview 用の設定を作り直した。`machibun2026` のベースも同じ手順で直した（root `/web`、`web/*`）。このとき Preview 用の設定が変数ごと消えたので、作り直して `CMS_URL` と `CMS_TOKEN` を入れ直した。今は2つとも `previews_enabled: false`。オンに戻さない。画面の「既存のプレビューに適用」も使わない。
    - 画面でビルドの設定を変える前に、`cf builds triggers list --external-script-id <Worker の id>` で、何が付いているかを見る。
    - 作り直した後、両方の Preview 用の設定で `preview` ブランチのビルドが通り、公開サイトの Preview は Deploy Hook（`cms-preview`）からもビルドされた。Deploy Hook は2つ（`cms-production`・`cms-preview`）とも消えていなかった。`preview` への push からのビルドは、この記録を取り込むときに確かめる。
+
+17. （2026-10-18、`feat/share-and-search`）共有と検索のための設計を `docs/notes/share-and-search.md` に書いた（favicon・共有の画像（OGP）・canonical と `noindex`・sitemap）。Codex（labteam）の設計のレビューを受けて直した。イベントの構造化データは、Google の表示が日本に対応していないので入れない。次の順で進める。
+   1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
+   2. （2026-11-01）設計どおりに実装した。このブランチの PR で `preview` に取り込み、Preview で確かめる（設計の「確かめ方」）。Cloudflare が自動で付ける robots.txt の content signal と、自前の `web/public/robots.txt` が合わさるかも、Preview で確かめる。
+   3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。（PR #22 は 2026-10-31 に本番に入れ、#2 を閉じた。）
 
 ## いまの状態
 
