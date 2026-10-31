@@ -63,9 +63,9 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 			<div class="container">
 				<div class="ticket">
 					<div class="ticket__main">
-						<Image class="linework bob hero-art--cheers" src={cheers} alt="" width={192} densities={[1, 2]} layout="none" loading="eager" />
+						<Image class="linework bob hero-art--cheers" src={cheers} alt="" width={192} widths={[104, 192, 208, 384]} sizes="(min-width: 768px) clamp(9rem, 15vw, 12rem), 6.5rem" layout="none" loading="eager" />
 						<Image class="linework sway-hang hide-sm hero-art--garland" src={garland} alt="" width={144} densities={[1, 2]} layout="none" loading="eager" />
-						<Image class="linework sway-float hero-art--balloons" src={balloons} alt="" width={112} densities={[1, 2]} layout="none" loading="eager" />
+						<Image class="linework sway-float hero-art--balloons" src={balloons} alt="" width={112} widths={[64, 112, 128, 224]} sizes="(min-width: 768px) 7rem, 4rem" layout="none" loading="eager" />
 						<Image class="linework sway-hang hide-sm hero-art--bulb" src={bulb2} alt="" width={80} densities={[1, 2]} layout="none" loading="eager" />
 						<Image class="linework bob hide-sm hero-art--market" src={market} alt="" width={208} densities={[1, 2]} layout="none" loading="eager" />
 
