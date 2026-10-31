@@ -22,13 +22,13 @@
 ## 作るもの
 
 ### 1. favicon
-- `web/public/favicon.svg`: ブランドのグラデーションの丸みのある四角に、ロゴの一部を白で載せる。どの形を使うかは、候補を5つ画像にして並べ、user に選んでもらう。
-- `web/src/pages/apple-touch-icon.png.ts`: iOS は SVG のアイコンを使わないので、同じ SVG を sharp（Astro の画像処理で入っている）で 180×180 の PNG にする。PNG は commit せず、ビルドのたびに作る。
+- `web/src/pages/favicon.svg.ts`: ブランドのグラデーション（`--gradient-brand`）の丸みのある四角に、ロゴの「まち」「ぶん」を 2×2 に並べ、本文の地の色（`#1a1b20`）で載せる。白で載せる形は採らない。グラデーションの明るい水色（`#58e6ff`）の上の白は、コントラストが 1.5:1 ほど（地の色なら 11.6:1）で、16px では読めないため。（2026-11-01、user が6つの候補から選んだ）。SVG はロゴの path から、ビルドのたびに作る（`web/src/lib/brand-art.ts`）。
+- `web/src/pages/apple-touch-icon.png.ts`: iOS は SVG のアイコンを使わないので、同じ SVG を角を丸めずに sharp（Astro の画像処理で入っている）で 180×180 の PNG にする。PNG は commit せず、ビルドのたびに作る。
 - `Base.astro` に `<link rel="icon" href="/favicon.svg" type="image/svg+xml">` と `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`。これで多くのブラウザは `/favicon.ico` を取りに行かなくなるが、取りに来るクライアントは残る（Codex のレビュー）。
 
 ### 2. 共有の画像（OGP）
 - `web/src/pages/og.png.ts`: 1200×630。暗い背景に、ブロブを3つ（`--blob-a` から `--blob-c` の色）置き、真ん中にロゴ。SVG を組み立て、sharp で PNG にする。
-  - SVG の描画（librsvg）は `in oklch` の補間を知らないので、グラデーションは同じ4色の sRGB の stop で近づける。
+  - SVG の描画（librsvg）は `in oklch` の補間を知らないので、oklch で計算した中間の色を stop に並べて近づける（`brand-art.ts` の `oklchStops`）。sRGB の2色の stop にすると、水色とピンクの間が tokens.css の色と違って見えた。
 - 出展者のページ: 1枚目の写真を `getImage` で幅 1200 の JPEG にする（4:3 のまま。小さい写真は大きくしない）。共有先は 1200×630 でなくても画像を出すので、切り抜いて大きさをそろえることはしない。`og:image:width` と `og:image:height` は `getImage` の結果から書く。CMS の URL を直接渡さないのは、共有先が CMS に取りに来るのを避けるため。
 
 ### 3. `Base.astro` に足すもの
@@ -59,7 +59,7 @@
 - 本番に入れた後に確かめること:
   - Facebook の Sharing Debugger と LINE で共有したとき、カードに画像が出ること
   - タブに favicon が出て、`/favicon.svg` の取得が 200 であること
-- canonical・sitemap・配信の URL で、末尾のスラッシュの有無がそろっていること。
+- canonical・sitemap・配信の URL で、末尾のスラッシュの有無がそろっていること。配信はスラッシュ付きの URL（`/exhibitors/<識別名>/`）で、付けない URL は 307 で転送される。トップページから詳細へのリンクもスラッシュ付きにそろえた。
 - `main` のビルドの成果物に `noindex` が無いこと。
 - PageSpeed の SEO とベストプラクティスが 100 のままであること。
 

@@ -97,7 +97,7 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 							<li>
 								<time datetime={isoDate(new Date(n.data.date))}>{jaDate(new Date(n.data.date))}</time>
 								<span>{n.data.pinned ? <span class="label">重要</span> : null}</span>
-								<a href={`/notices/${pageSlug(n)}`}>{n.data.title}</a>
+								<a href={`/notices/${pageSlug(n)}/`}>{n.data.title}</a>
 							</li>
 						))}
 					</ul>
@@ -122,7 +122,7 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 								)}
 								<div class="exhibitor__body">
 									<span>{category && <span class="label">{category}</span>}</span>
-									<h3 class="exhibitor__name"><a href={`/exhibitors/${pageSlug(e)}`}>{e.data.title}</a></h3>
+									<h3 class="exhibitor__name"><a href={`/exhibitors/${pageSlug(e)}/`}>{e.data.title}</a></h3>
 									{e.data.catch && <p class="exhibitor__catch">{e.data.catch}</p>}
 								</div>
 							</li>

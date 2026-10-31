@@ -94,9 +94,9 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    - 作り直した後、両方の Preview 用の設定で `preview` ブランチのビルドが通り、公開サイトの Preview は Deploy Hook（`cms-preview`）からもビルドされた。Deploy Hook は2つ（`cms-production`・`cms-preview`）とも消えていなかった。`preview` への push からのビルドは、この記録を取り込むときに確かめる。
 
 17. （2026-10-18、`feat/share-and-search`）共有と検索のための設計を `docs/notes/share-and-search.md` に書いた（favicon・共有の画像（OGP）・canonical と `noindex`・sitemap）。Codex（labteam）の設計のレビューを受けて直した。イベントの構造化データは、Google の表示が日本に対応していないので入れない。次の順で進める。
-   1. favicon の候補を5つ画像にして user に見せ、選んでもらう。
-   2. 設計どおりに実装し、このブランチの PR で `preview` に取り込み、Preview で確かめる（設計の「確かめ方」）。
-   3. `preview` を `main` に取り込む。PR #22（フォント）もこのとき本番に入る。本番で PageSpeed を測り直し、#2 を閉じる。
+   1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
+   2. （2026-11-01）設計どおりに実装した。このブランチの PR で `preview` に取り込み、Preview で確かめる（設計の「確かめ方」）。Cloudflare が自動で付ける robots.txt の content signal と、自前の `web/public/robots.txt` が合わさるかも、Preview で確かめる。
+   3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。（PR #22 は 2026-10-31 に本番に入れ、#2 を閉じた。）
 
 ## いまの状態
 

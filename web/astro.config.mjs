@@ -1,4 +1,5 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 // vite の loadEnv は採らない。web の依存に vite を足すことになるため
@@ -22,6 +23,8 @@ const previewBadge = {
 };
 
 export default defineConfig({
+	// Preview のビルドで Preview の URL にする方法は採らない。Preview は noindex なので、共有や検索の URL は本番だけを指せばよいため
+	site: "https://machibun2026.yurumachi-yuruyuru.workers.dev",
 	output: "static",
 	image: {
 		// どのホストの写真でも縮める設定は採らない。CMS 以外の URL を取りに行かないため
@@ -29,6 +32,6 @@ export default defineConfig({
 		layout: "constrained",
 		responsiveStyles: true,
 	},
-	integrations: process.env.WORKERS_CI_BRANCH === "preview" ? [previewBadge] : [],
+	integrations: [sitemap({ filter: (page) => !page.endsWith("/404/") }), ...(process.env.WORKERS_CI_BRANCH === "preview" ? [previewBadge] : [])],
 	devToolbar: { enabled: false },
 });

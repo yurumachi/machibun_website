@@ -6,6 +6,8 @@ import "../styles/blobs.css";
 interface Props {
 	title?: string;
 	description?: string;
+	image?: { src: string; width: number; height: number; alt: string };
+	noindex?: boolean;
 }
 
 const siteTitle = "まちナかぶんかさい";
@@ -14,6 +16,10 @@ const description = Astro.props.description ?? "夜のマルシェとまちの�
 // Preview にも入れる方法は採らない。Preview を見た数が本番の訪問者の数に混ざるため。
 // beacon に integrity を付ける方法も採らない。Cloudflare が版を付けずに中身を更新するので、付けると読み込めなくなる
 const analytics = process.env.WORKERS_CI_BRANCH === "main";
+// ページから false を渡して Preview の noindex を外せる形は採らない。Preview が検索に載るのを防げなくなるため
+const noindex = process.env.WORKERS_CI_BRANCH !== "main" || Astro.props.noindex;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const image = Astro.props.image ?? { src: "/og.png", width: 1200, height: 630, alt: "まちナかぶんかさいのロゴ" };
 ---
 
 <!doctype html>
@@ -23,6 +29,20 @@ const analytics = process.env.WORKERS_CI_BRANCH === "main";
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={description} />
+		{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={siteTitle} />
+		<meta property="og:locale" content="ja_JP" />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={new URL(image.src, Astro.site).href} />
+		<meta property="og:image:width" content={String(image.width)} />
+		<meta property="og:image:height" content={String(image.height)} />
+		<meta property="og:image:alt" content={image.alt} />
+		<meta name="twitter:card" content="summary_large_image" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<!-- Astro の Fonts API で自前で配る方法は採らない。@font-face が全ページの HTML に埋め込まれ、HTML が gzip で 4KB から 67KB に増えるため -->
