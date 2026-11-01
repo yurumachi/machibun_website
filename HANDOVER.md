@@ -117,7 +117,8 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
      1. カテゴリとステージのコレクションの `group` を「イベント設定」にする（MCP の `schema_update_collection`、または画面のスキーマ）。
      2. 7つのコレクションの年の項目の既定値（2026）を消す。manifest で上書きしているので使われないが、残すとスキーマの画面で紛らわしい。
      3. MCP で開催年を変えるなら、プラグイン → admin-guard で MCP の道具を有効にする。
-   - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（開催年だけ）とカテゴリの候補（開催年だけ）も API で確かめた。3 は未。manifest とプラグインのページ（「過去の開催」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
+     4. カテゴリのコレクションの表示名と、出展者の項目 `category` の表示名を「出展カテゴリ」にする（`schema_update_collection`・`schema_update_field`。slug は `categories`・`category` のまま）。
+   - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（開催年だけ）とカテゴリの候補（開催年だけ）も API で確かめた。4 は 2026-11-02 に MCP で済ませた。3 は未。manifest とプラグインのページ（「過去の開催」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
    - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で登録した（`~/.claude.json`、repo には入らない）。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。本番の token はまだ無い。
 
 ## いまの状態
