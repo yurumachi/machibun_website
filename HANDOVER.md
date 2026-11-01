@@ -119,6 +119,7 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
      3. MCP で開催年を変えるなら、プラグイン → admin-guard で MCP の道具を有効にする。
      4. カテゴリのコレクションの表示名と、出展者の項目 `category` の表示名を「出展カテゴリ」にする（`schema_update_collection`・`schema_update_field`。slug は `categories`・`category` のまま）。
      5. 出演枠のコレクションの表示名を「出演時間」にする（slug は `slots` のまま）。サイドバーの並びを、出展者・出演者・出演時間・協賛・お知らせ・ステージ・出展カテゴリにする（`POST /_emdash/api/schema/collections/reorder`、本体は `{"slugs":[...]}`、`schema:manage` が要る）。「イベント設定」のフォルダは、中で最初に並ぶコレクションの位置に出る。
+     6. 一覧の列から年を外し（出展者は出展場所の番号、お知らせは日付とピン留めだけにする）、出演時間に項目 `title`（表示名（自動）、string）を足して、出演時間の列を空にする（列は REST の `PUT /_emdash/api/schema/collections/<slug>` の `admin.listColumns`。項目は MCP の `schema_create_field`）。足した後、既存の出演時間を一度保存し直すと、保存のフックが表示名を入れる。
    - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（開催年だけ）とカテゴリの候補（開催年だけ）も API で確かめた。4 と 5 は 2026-11-02 に MCP と API で済ませた。3 は未。manifest とプラグインのページ（「過去の開催」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
    - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で登録した（`~/.claude.json`、repo には入らない）。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。本番の token はまだ無い。
 
