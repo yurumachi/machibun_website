@@ -32,7 +32,7 @@ const [categoryOf, performerOf, stageOf] = await Promise.all([
 const scheduleRows = slots.flatMap((s) => {
 	const performer = performerOf.get(s.id);
 	const stage = stageOf.get(s.id);
-	// 出演者かステージが公開されていない出演枠を、時刻だけの行で載せる方法は採らない。誰がどこに出るか分からない行になるため
+	// 出演者かステージが公開されていない出演時間を、時刻だけの行で載せる方法は採らない。誰がどこに出るか分からない行になるため
 	if (!performer || !stage) return [];
 	return [{ startsAt: new Date(s.data.starts_at), endsAt: new Date(s.data.ends_at), performer, stage }];
 });

@@ -37,7 +37,7 @@ export async function list<T>(collection: string, year: number) {
 	return items as Entry<T>[];
 }
 
-// 参照する側（出展者・出演枠）から取る API（`{id}` と `{id}/references/{relation}/children`）は使わない。
+// 参照する側（出展者・出演時間）から取る API（`{id}` と `{id}/references/{relation}/children`）は使わない。
 // token を作った管理者には、下書きに取り置かれた選択を返すため。参照される側から取ると、公開中のつながりだけが返る
 export async function titleByReferrer(collection: string, targets: Entry<{ title: string }>[], relation: string) {
 	const titles = new Map<string, string>();

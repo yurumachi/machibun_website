@@ -4,7 +4,7 @@ import { ContentSaveRejectedError, definePlugin, getPluginSetting, type ActorInf
 // ADR 0008。@emdash-cms/auth の Role を読む方法は採らない。cms の依存に足すことになるため
 export const ADMIN = 50;
 export const ADMIN_ONLY = new Set(["categories", "stages"]);
-const LABELS: Record<string, string> = { exhibitors: "出展者", performers: "出演者", slots: "出演枠", stages: "ステージ", categories: "出展カテゴリ", sponsors: "協賛", notices: "お知らせ" };
+const LABELS: Record<string, string> = { exhibitors: "出展者", performers: "出演者", slots: "出演時間", stages: "ステージ", categories: "出展カテゴリ", sponsors: "協賛", notices: "お知らせ" };
 export const YEARLY = new Set(Object.keys(LABELS));
 const FIRST_YEAR = 2026;
 

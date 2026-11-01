@@ -92,8 +92,8 @@
 		},
 		{
 			"slug": "slots",
-			"label": "出演枠",
-			"labelSingular": "出演枠",
+			"label": "出演時間",
+			"labelSingular": "出演時間",
 			"routable": false,
 			"sortOrder": 3,
 			"dateField": "starts_at",
@@ -104,32 +104,6 @@
 				{ "slug": "stage", "label": "ステージ", "type": "reference", "required": true, "validation": { "targetCollection": "stages" } },
 				{ "slug": "starts_at", "label": "開始の時刻", "type": "datetime", "required": true, "indexed": true },
 				{ "slug": "ends_at", "label": "終了の時刻", "type": "datetime", "required": true }
-			]
-		},
-		{
-			"slug": "stages",
-			"label": "ステージ",
-			"labelSingular": "ステージ",
-			"routable": false,
-			"group": "イベント設定",
-			"sortOrder": 4,
-			"admin": { "listColumns": ["year"] },
-			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
-				{ "slug": "title", "label": "名前", "type": "string", "required": true }
-			]
-		},
-		{
-			"slug": "categories",
-			"label": "出展カテゴリ",
-			"labelSingular": "出展カテゴリ",
-			"routable": false,
-			"group": "イベント設定",
-			"sortOrder": 5,
-			"admin": { "listColumns": ["year"] },
-			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
-				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		},
 		{
@@ -162,6 +136,32 @@
 				{ "slug": "date", "label": "日付", "type": "datetime", "required": true, "indexed": true },
 				{ "slug": "body", "label": "本文", "type": "portableText", "searchable": true },
 				{ "slug": "pinned", "label": "一覧の上に固定する", "type": "boolean", "defaultValue": false }
+			]
+		},
+		{
+			"slug": "stages",
+			"label": "ステージ",
+			"labelSingular": "ステージ",
+			"routable": false,
+			"group": "イベント設定",
+			"sortOrder": 4,
+			"admin": { "listColumns": ["year"] },
+			"fields": [
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
+				{ "slug": "title", "label": "名前", "type": "string", "required": true }
+			]
+		},
+		{
+			"slug": "categories",
+			"label": "出展カテゴリ",
+			"labelSingular": "出展カテゴリ",
+			"routable": false,
+			"group": "イベント設定",
+			"sortOrder": 5,
+			"admin": { "listColumns": ["year"] },
+			"fields": [
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
+				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		}
 	],
