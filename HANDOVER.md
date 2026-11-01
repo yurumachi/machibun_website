@@ -117,6 +117,8 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
      1. カテゴリとステージのコレクションの `group` を「設定」にする（MCP の `schema_update_collection`、または画面のスキーマ）。
      2. 7つのコレクションの年の項目の既定値（2026）を消す。manifest で上書きしているので使われないが、残すと設定の画面で紛らわしい。
      3. MCP で今の年を変えるなら、プラグイン → admin-guard で MCP の道具を有効にする。
+   - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた。一覧（今の年だけ）とカテゴリの候補（今の年だけ）も API で確かめた。3 は未。manifest とプラグインのページ（「前の年の中身」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
+   - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で登録した（`~/.claude.json`、repo には入らない）。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。本番の token はまだ無い。
 
 ## いまの状態
 
