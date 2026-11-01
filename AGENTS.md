@@ -20,7 +20,7 @@
 ## git
 
 - `main` と `preview` は保護されている。`preview` から `feat/<内容>` のブランチを切り、PR で `preview` に取り込む。`preview` で確かめてから、`preview` を PR で `main` に取り込む（merge commit で。squash しない）。ADR 0007。 merge したら、その feat ブランチは GitHub と手元の両方から消す（Cloudflare のそのブランチの Preview も自動で消える）。
-- commit と push は、user に言われたときだけ行う。
+- `feat/<内容>` のブランチでの commit・push・PR と、`preview` への merge（Preview へのデプロイ）は、聞かずに進める（2026-11-01 に user が決めた）。
 - commit メッセージは日本語で、1行目に何をしたか、本文になぜそうしたかを書く。
 - commit・PR に、モデル名・`Co-Authored-By`・session の URL を入れない。
 - `docs/*.ai` と `docs/*.pdf`（チラシの原本）は commit しない。
@@ -34,6 +34,7 @@
 
 ## 止まって聞くとき
 
-- デプロイ、モックやプレビューの外部への公開、GitHub の設定の変更の前
-- データやブランチを消す前
+- `main` への merge（本番へのデプロイ）、モックやプレビューの外部への公開、GitHub の設定の変更の前
+- 本番の CMS の中身やスキーマを変える前。Preview の CMS は、MCP で聞かずに変えてよい
+- データやブランチを消す前（merge した feat ブランチは除く）
 - 連絡先（個人情報）の置き場所や見せ方を変えるとき
