@@ -54,7 +54,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (content && ADMIN_ONLY.has(content[1]) && context.request.method !== "GET" && role < ADMIN) {
 		return Response.json({ success: false, error: { code: "FORBIDDEN", message: ADMIN_ONLY_MESSAGE } }, { status: 403 });
 	}
-	// 一覧の画面（page を付けて呼ぶ）とカテゴリ・ステージの候補を開催年に絞る。出展者などの候補は絞らない。「前回の出展」で前の年を選ぶため
+	// 一覧の画面（page を付けて呼ぶ）と出展カテゴリ・ステージの候補を開催年に絞る。出展者などの候補は絞らない。「前回の出展」で前の年を選ぶため
 	// next() に書き換えた URL や Request を渡す方法は採らない。EmDash の一覧の API は context.url を読むので、絞り込みが届かないため
 	const params = context.url.searchParams;
 	if (content && YEARLY.has(content[1]) && context.request.method === "GET" && !content[2] && !params.has("fieldFilters") && (params.has("page") || ADMIN_ONLY.has(content[1]))) {

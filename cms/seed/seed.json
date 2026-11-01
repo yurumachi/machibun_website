@@ -24,7 +24,7 @@
 			"fields": [
 				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true, "searchable": true },
-				{ "slug": "category", "label": "カテゴリ", "type": "reference", "validation": { "targetCollection": "categories" } },
+				{ "slug": "category", "label": "出展カテゴリ", "type": "reference", "validation": { "targetCollection": "categories" } },
 				{ "slug": "catch", "label": "ひとこと", "type": "string", "searchable": true },
 				{
 					"slug": "photos",
@@ -121,8 +121,8 @@
 		},
 		{
 			"slug": "categories",
-			"label": "カテゴリ",
-			"labelSingular": "カテゴリ",
+			"label": "出展カテゴリ",
+			"labelSingular": "出展カテゴリ",
 			"routable": false,
 			"group": "イベント設定",
 			"sortOrder": 5,

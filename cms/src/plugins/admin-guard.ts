@@ -4,14 +4,14 @@ import { ContentSaveRejectedError, definePlugin, getPluginSetting, type ActorInf
 // ADR 0008。@emdash-cms/auth の Role を読む方法は採らない。cms の依存に足すことになるため
 export const ADMIN = 50;
 export const ADMIN_ONLY = new Set(["categories", "stages"]);
-const LABELS: Record<string, string> = { exhibitors: "出展者", performers: "出演者", slots: "出演枠", stages: "ステージ", categories: "カテゴリ", sponsors: "協賛", notices: "お知らせ" };
+const LABELS: Record<string, string> = { exhibitors: "出展者", performers: "出演者", slots: "出演枠", stages: "ステージ", categories: "出展カテゴリ", sponsors: "協賛", notices: "お知らせ" };
 export const YEARLY = new Set(Object.keys(LABELS));
 const FIRST_YEAR = 2026;
 
 export const currentYear = async () => (await getPluginSetting<number>("admin-guard", "currentYear")) ?? FIRST_YEAR;
 
 const isAdmin = (actor?: ActorInfo) => (actor?.role ?? 0) >= ADMIN;
-export const ADMIN_ONLY_MESSAGE = "カテゴリとステージの登録・編集は、管理者のみ行えます";
+export const ADMIN_ONLY_MESSAGE = "出展カテゴリとステージの登録・編集は、管理者のみ行えます";
 export const PAST_MESSAGE = "過去の開催のデータは編集できません（参考として保存しています）";
 
 const isEmpty = (v: unknown) => v === undefined || v === null || v === "";
@@ -58,7 +58,7 @@ async function yearPage(ctx: RouteContext, toast?: { message: string; type: "suc
 	];
 	if (isAdmin(ctx.user)) {
 		blocks.push({ type: "form", block_id: "year", fields: [{ type: "number_input", action_id: "year", label: "開催年", min: FIRST_YEAR, initial_value: year }], submit: { label: "保存", action_id: "save_year" } });
-		blocks.push({ type: "context", text: "開催年を変更したら、その年のカテゴリとステージを登録してください。変更前の年のデータは、実行委員は編集できなくなります。" });
+		blocks.push({ type: "context", text: "開催年を変更したら、その年の出展カテゴリとステージを登録してください。変更前の年のデータは、実行委員は編集できなくなります。" });
 	} else {
 		blocks.push({ type: "fields", fields: [{ label: "開催年", value: `${year}年` }] });
 		blocks.push({ type: "context", text: "開催年の変更は管理者のみ行えます。" });
