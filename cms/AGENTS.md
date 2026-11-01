@@ -17,8 +17,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`.
 | `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
 | `seed/seed.json`         | Schema definition + demo content (collections, fields, taxonomies, menus, widgets) |
 | `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
-| `src/layouts/Base.astro` | Base layout with EmDash wiring (page contributions), header, footer, tab bar      |
-| `src/pages/`             | Astro pages -- all server-rendered                                                 |
+| `src/pages/`             | 公開ページは置かない。`/` は公開サイトか管理画面へ転送するだけ（ADR 0006）              |
 
 ## Skills
 
@@ -36,7 +35,7 @@ This template ships with `.mcp.json`, `.cursor/mcp.json`, and `.vscode/mcp.json`
 
 ## Rules
 
-- All content pages must be server-rendered (`output: "server"`). No `getStaticPaths()` for CMS content.
+- 公開ページは `web/`（静的なサイト）にあり、`cms/` には置かない（ADR 0006）。
 - Image fields are objects (`{ src, alt }`), not strings. Use `<Image image={...} />` from `"emdash/ui"`.
 - `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for API calls like `getEntryTerms`).
 - When Astro's cache is enabled, pass content-query hints to `Astro.cache.set(cacheHint)`. Use the `WithCacheHint` variants for site settings, menus, taxonomies, and widget areas rendered by cached routes.

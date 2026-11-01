@@ -23,6 +23,11 @@ export default defineConfig({
 					version: "0.1.0",
 					entrypoint: fileURLToPath(new URL("./src/plugins/rebuild-web.ts", import.meta.url)),
 				},
+				{
+					id: "admin-guard",
+					version: "0.1.0",
+					entrypoint: fileURLToPath(new URL("./src/plugins/admin-guard.ts", import.meta.url)),
+				},
 			],
 		}),
 	],

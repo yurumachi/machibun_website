@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage, inferRemoteSize } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import { YEAR, list, mediaUrl, pageSlug, safeHref, titleByReferrer, type Entry, type MediaValue } from "../../lib/cms";
 
@@ -27,9 +27,20 @@ const links = e.data.links?.flatMap((l) => {
 	const href = safeHref(l.url);
 	return href ? [{ label: l.label, href }] : [];
 }) ?? [];
+
+// 共有先に CMS の URL を渡す方法は採らない。共有先が CMS に写真を取りに来るため
+async function shareImage(p: { image: MediaValue }) {
+	const src = mediaUrl(p.image);
+	const size = await inferRemoteSize(src);
+	const width = Math.min(1200, size.width);
+	const height = Math.round((size.height * width) / size.width);
+	const img = await getImage({ src, width, height, format: "jpeg" });
+	return { src: img.src, width, height, alt: p.image.alt || e.data.title };
+}
+const image = photos[0] && (await shareImage(photos[0]));
 ---
 
-<Base title={e.data.title} description={e.data.catch}>
+<Base title={e.data.title} description={e.data.catch} image={image}>
 	<main id="main" class="section">
 		<div class="container reading detail">
 			<p class="detail__back"><a href="/#exhibitors">出展者の一覧へ戻る</a></p>

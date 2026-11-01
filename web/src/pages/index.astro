@@ -32,10 +32,18 @@ const [categoryOf, performerOf, stageOf] = await Promise.all([
 const scheduleRows = slots.flatMap((s) => {
 	const performer = performerOf.get(s.id);
 	const stage = stageOf.get(s.id);
-	// 出演者かステージが公開されていない出演枠を、時刻だけの行で載せる方法は採らない。誰がどこに出るか分からない行になるため
+	// 出演者かステージが公開されていない出演時間を、時刻だけの行で載せる方法は採らない。誰がどこに出るか分からない行になるため
 	if (!performer || !stage) return [];
 	return [{ startsAt: new Date(s.data.starts_at), endsAt: new Date(s.data.ends_at), performer, stage }];
 });
+const HOUR = 3_600_000;
+const STEP = 5 * 60_000;
+const scheduleStart = Math.floor(Math.min(...scheduleRows.map((s) => s.startsAt.getTime())) / HOUR) * HOUR;
+const scheduleEnd = Math.ceil(Math.max(...scheduleRows.map((s) => s.endsAt.getTime())) / HOUR) * HOUR;
+const rowOf = (d: Date) => Math.round((d.getTime() - scheduleStart) / STEP) + 1;
+const linesOf = (s: { startsAt: Date; endsAt: Date }) => Math.max(3, Math.floor((rowOf(s.endsAt) - rowOf(s.startsAt) - 2.25) / 1.4));
+const scheduleStages = [...new Set(scheduleRows.map((s) => s.stage))];
+const scheduleHours = scheduleRows.length ? Array.from({ length: (scheduleEnd - scheduleStart) / HOUR + 1 }, (_, i) => new Date(scheduleStart + i * HOUR)) : [];
 
 const logoSponsors = sponsors.filter((s) => s.data.logo);
 const nameSponsors = sponsors.filter((s) => !s.data.logo);
@@ -63,9 +71,9 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 			<div class="container">
 				<div class="ticket">
 					<div class="ticket__main">
-						<Image class="linework bob hero-art--cheers" src={cheers} alt="" width={192} densities={[1, 2]} layout="none" loading="eager" />
+						<Image class="linework bob hero-art--cheers" src={cheers} alt="" width={192} widths={[104, 192, 208, 384]} sizes="(min-width: 768px) clamp(9rem, 15vw, 12rem), 6.5rem" layout="none" loading="eager" />
 						<Image class="linework sway-hang hide-sm hero-art--garland" src={garland} alt="" width={144} densities={[1, 2]} layout="none" loading="eager" />
-						<Image class="linework sway-float hero-art--balloons" src={balloons} alt="" width={112} densities={[1, 2]} layout="none" loading="eager" />
+						<Image class="linework sway-float hero-art--balloons" src={balloons} alt="" width={112} widths={[64, 112, 128, 224]} sizes="(min-width: 768px) 7rem, 4rem" layout="none" loading="eager" />
 						<Image class="linework sway-hang hide-sm hero-art--bulb" src={bulb2} alt="" width={80} densities={[1, 2]} layout="none" loading="eager" />
 						<Image class="linework bob hide-sm hero-art--market" src={market} alt="" width={208} densities={[1, 2]} layout="none" loading="eager" />
 
@@ -97,7 +105,7 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 							<li>
 								<time datetime={isoDate(new Date(n.data.date))}>{jaDate(new Date(n.data.date))}</time>
 								<span>{n.data.pinned ? <span class="label">重要</span> : null}</span>
-								<a href={`/notices/${pageSlug(n)}`}>{n.data.title}</a>
+								<a href={`/notices/${pageSlug(n)}/`}>{n.data.title}</a>
 							</li>
 						))}
 					</ul>
@@ -122,7 +130,7 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 								)}
 								<div class="exhibitor__body">
 									<span>{category && <span class="label">{category}</span>}</span>
-									<h3 class="exhibitor__name"><a href={`/exhibitors/${pageSlug(e)}`}>{e.data.title}</a></h3>
+									<h3 class="exhibitor__name"><a href={`/exhibitors/${pageSlug(e)}/`}>{e.data.title}</a></h3>
 									{e.data.catch && <p class="exhibitor__catch">{e.data.catch}</p>}
 								</div>
 							</li>
@@ -137,20 +145,31 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 				<span class="blob blob--b blob--s1 blob--grow" aria-hidden="true" style="width:min(26rem,70vw);height:min(20rem,56vw);right:-8rem;top:2rem"></span>
 				<span class="blob blob--s4 blob--grow blob--extra" aria-hidden="true" style="width:16rem;height:14rem;left:-6rem;bottom:0"></span>
 				<h2 class="section__title">スケジュール</h2>
-				{scheduleRows.length === 0 ? <p class="section__lead">スケジュールは決まり次第お知らせします。</p> : <div class="table-wrap">
-					<table>
-						<caption class="sr-only">ステージのスケジュール</caption>
-						<thead><tr><th scope="col">時間</th><th scope="col">出演者</th><th scope="col">ステージ</th></tr></thead>
-						<tbody>
-							{scheduleRows.map((s) => (
-								<tr>
-									<th scope="row"><time datetime={s.startsAt.toISOString()}>{hhmm(s.startsAt)}</time>–<time datetime={s.endsAt.toISOString()}>{hhmm(s.endsAt)}</time></th>
-									<td>{s.performer}</td>
-									<td>{s.stage}</td>
-								</tr>
+				{scheduleRows.length === 0 ? <p class="section__lead">スケジュールは決まり次第お知らせします。</p> : <div class="timetable">
+					{scheduleStages.length > 1 && <div class="timetable__filter" role="group" aria-label="表示するステージ" hidden>
+						<button type="button" aria-pressed="true" data-stage="">すべて</button>
+						{scheduleStages.map((name, i) => <button type="button" aria-pressed="false" data-stage={i}>{name}</button>)}
+					</div>}
+					<div class="timetable__scroll">
+						<div class="timetable__grid" style={`--rows:${(scheduleEnd - scheduleStart) / STEP}`}>
+							<div class="timetable__axis" aria-hidden="true">
+								{scheduleHours.map((h, i) => <span style={`--row:${i * (HOUR / STEP)}`}>{hhmm(h)}</span>)}
+							</div>
+							{scheduleStages.map((name, i) => (
+								<section class="timetable__stage" data-stage={i} style={`--stage-color:var(--stage-${i % 3})`} aria-labelledby={`stage-${i}`}>
+									<h3 class="timetable__name" id={`stage-${i}`}>{name}</h3>
+									<ol class="timetable__body">
+										{scheduleRows.filter((s) => s.stage === name).map((s) => (
+											<li class="timetable__slot" style={`grid-row:${rowOf(s.startsAt)}/${rowOf(s.endsAt)};--lines:${linesOf(s)}`}>
+												<span class="timetable__time"><time datetime={s.startsAt.toISOString()}>{hhmm(s.startsAt)}</time>–<time datetime={s.endsAt.toISOString()}>{hhmm(s.endsAt)}</time></span>
+												<span class="timetable__performer">{s.performer}</span>
+											</li>
+										))}
+									</ol>
+								</section>
 							))}
-						</tbody>
-					</table>
+						</div>
+					</div>
 				</div>}
 			</div>
 		</section>
@@ -195,4 +214,16 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 			</div>
 		</section>
 	</main>
+<script>
+	const filter = document.querySelector<HTMLElement>(".timetable__filter");
+	if (filter) {
+		filter.hidden = false;
+		filter.addEventListener("click", (e) => {
+			const button = (e.target as HTMLElement).closest("button");
+			if (!button) return;
+			for (const b of filter.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b === button));
+			for (const stage of document.querySelectorAll<HTMLElement>(".timetable__stage")) stage.hidden = button.dataset.stage !== "" && stage.dataset.stage !== button.dataset.stage;
+		});
+	}
+</script>
 </Base>

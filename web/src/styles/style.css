@@ -241,6 +241,46 @@ th, td { padding: var(--space-2); text-align: left; border-bottom: 1px solid var
 thead th { background: var(--color-surface-2); border-bottom: 2px solid var(--color-border); }
 tbody th { font-weight: var(--fw-bold); white-space: nowrap; }
 
+/* ---------- Timetable ---------- */
+.timetable {
+  --hour: 12rem; --step: calc(var(--hour) / 12); --head: 3.5rem;
+  --stage-0: var(--brand-g3); --stage-1: var(--brand-g4); --stage-2: var(--brand-g1);
+}
+.timetable__filter { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3); }
+.timetable__filter button {
+  min-height: var(--target-min); padding: 0 var(--space-2); border-radius: 999px;
+  border: 1px solid var(--color-border); background: transparent; color: var(--color-text);
+  font: inherit; font-weight: var(--fw-bold); cursor: pointer;
+}
+.timetable__filter button[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.timetable__filter[hidden], .timetable__stage[hidden] { display: none; }
+.timetable__scroll { overflow-x: auto; overflow-y: hidden; }
+.timetable__grid { display: flex; gap: var(--space-1); padding-bottom: var(--space-2); }
+.timetable__axis { flex: 0 0 3rem; position: relative; margin-top: var(--head); height: calc(var(--rows) * var(--step)); }
+.timetable__axis span {
+  position: absolute; top: calc(var(--row) * var(--step)); transform: translateY(-50%);
+  font-size: var(--fs-14); color: var(--color-text-sub); font-variant-numeric: tabular-nums;
+}
+.timetable__stage { flex: 1 1 0; min-width: 8rem; }
+.timetable__name {
+  height: var(--head); margin: 0; padding: 0 var(--space-1); display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-16); text-align: center; line-height: 1.3;
+  background: var(--color-surface-2); border-top: 4px solid var(--stage-color); border-radius: var(--radius-s) var(--radius-s) 0 0;
+}
+.timetable__body {
+  list-style: none; margin: 0; padding: 0; display: grid;
+  grid-template-rows: repeat(var(--rows), var(--step));
+  background: repeating-linear-gradient(to bottom, var(--color-divider) 0 1px, transparent 1px var(--hour));
+}
+/* 高さを出演の長さだけで決める方法は採らない。短い出演では名前が読めなくなるため。中身が収まらないときは下に伸ばし、名前は 3 行で打ち切る */
+.timetable__slot {
+  align-self: start; min-height: calc(100% - 4px); position: relative;
+  margin: 2px 0; padding: 0.25rem var(--space-1); overflow: hidden;
+  background: var(--color-surface); border-left: 4px solid var(--stage-color); border-radius: var(--radius-s);
+}
+.timetable__time { display: block; font-size: var(--fs-14); color: var(--color-text-sub); font-variant-numeric: tabular-nums; }
+.timetable__performer { font-weight: var(--fw-bold); line-height: 1.4; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--lines); line-clamp: var(--lines); overflow: hidden; }
+
 /* ---------- Accordion (details/summary) ---------- */
 .accordion { border-top: 1px solid var(--color-divider); }
 .accordion details { border-bottom: 1px solid var(--color-divider); }
@@ -523,8 +563,6 @@ html { scroll-padding-block: calc(var(--header-h) + var(--space-2)) calc(var(--t
   .hero-side--bulb    { width: min(5rem, calc(50vw - 38rem)); left: 8vw; top: 0; }
   .hero-side--balloon { width: min(6rem, calc(50vw - 38rem)); right: 5vw; top: 14vh; }
   .hero-side--garland { width: min(14rem, calc(50vw - 36rem)); right: 2vw; bottom: 16vh; }
-  /* 出展者・協賛の一覧は本文より広げて横に多く並べる（文章の列は広げない） */
-  #exhibitors > .container, #sponsors > .container { max-width: calc(88rem + var(--page-margin) * 2); }
 }
 .site-header .global-nav { margin-left: auto; }
 .site-header__inner { flex-wrap: nowrap; }

@@ -20,11 +20,11 @@
 			"urlPattern": "/exhibitors/{slug}",
 			"supports": ["drafts", "revisions", "search"],
 			"sortOrder": 1,
-			"admin": { "listColumns": ["year", "booth_number"] },
+			"admin": { "listColumns": ["booth_number"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true, "searchable": true },
-				{ "slug": "category", "label": "カテゴリ", "type": "reference", "validation": { "targetCollection": "categories" } },
+				{ "slug": "category", "label": "出展カテゴリ", "type": "reference", "validation": { "targetCollection": "categories" } },
 				{ "slug": "catch", "label": "ひとこと", "type": "string", "searchable": true },
 				{
 					"slug": "photos",
@@ -64,9 +64,9 @@
 			"urlPattern": "/performers/{slug}",
 			"supports": ["drafts", "revisions", "search"],
 			"sortOrder": 2,
-			"admin": { "listColumns": ["year"] },
+			"admin": { "listColumns": [] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true, "searchable": true },
 				{ "slug": "photo", "label": "写真", "type": "image" },
 				{ "slug": "description", "label": "紹介文", "type": "text", "searchable": true },
@@ -92,42 +92,19 @@
 		},
 		{
 			"slug": "slots",
-			"label": "出演枠",
-			"labelSingular": "出演枠",
+			"label": "出演時間",
+			"labelSingular": "出演時間",
 			"routable": false,
 			"sortOrder": 3,
 			"dateField": "starts_at",
-			"admin": { "listColumns": ["year", "starts_at"] },
+			"admin": { "listColumns": [] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
+				{ "slug": "title", "label": "表示名（自動）", "type": "string" },
 				{ "slug": "performer", "label": "出演者", "type": "reference", "required": true, "validation": { "targetCollection": "performers" } },
 				{ "slug": "stage", "label": "ステージ", "type": "reference", "required": true, "validation": { "targetCollection": "stages" } },
 				{ "slug": "starts_at", "label": "開始の時刻", "type": "datetime", "required": true, "indexed": true },
 				{ "slug": "ends_at", "label": "終了の時刻", "type": "datetime", "required": true }
-			]
-		},
-		{
-			"slug": "stages",
-			"label": "ステージ",
-			"labelSingular": "ステージ",
-			"routable": false,
-			"sortOrder": 4,
-			"admin": { "listColumns": ["year"] },
-			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
-				{ "slug": "title", "label": "名前", "type": "string", "required": true }
-			]
-		},
-		{
-			"slug": "categories",
-			"label": "カテゴリ",
-			"labelSingular": "カテゴリ",
-			"routable": false,
-			"sortOrder": 5,
-			"admin": { "listColumns": ["year"] },
-			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
-				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		},
 		{
@@ -137,9 +114,9 @@
 			"routable": false,
 			"supports": ["drafts", "revisions", "search"],
 			"sortOrder": 6,
-			"admin": { "listColumns": ["year"] },
+			"admin": { "listColumns": [] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "企業名", "type": "string", "required": true, "searchable": true },
 				{ "slug": "logo", "label": "ロゴ", "type": "image" },
 				{ "slug": "url", "label": "リンク", "type": "url" }
@@ -153,13 +130,39 @@
 			"supports": ["drafts", "revisions", "search"],
 			"sortOrder": 7,
 			"dateField": "date",
-			"admin": { "listColumns": ["year", "date", "pinned"] },
+			"admin": { "listColumns": ["date", "pinned"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "タイトル", "type": "string", "required": true, "searchable": true },
 				{ "slug": "date", "label": "日付", "type": "datetime", "required": true, "indexed": true },
 				{ "slug": "body", "label": "本文", "type": "portableText", "searchable": true },
 				{ "slug": "pinned", "label": "一覧の上に固定する", "type": "boolean", "defaultValue": false }
+			]
+		},
+		{
+			"slug": "stages",
+			"label": "ステージ",
+			"labelSingular": "ステージ",
+			"routable": false,
+			"group": "イベント設定",
+			"sortOrder": 4,
+			"admin": { "listColumns": [] },
+			"fields": [
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
+				{ "slug": "title", "label": "名前", "type": "string", "required": true }
+			]
+		},
+		{
+			"slug": "categories",
+			"label": "出展カテゴリ",
+			"labelSingular": "出展カテゴリ",
+			"routable": false,
+			"group": "イベント設定",
+			"sortOrder": 5,
+			"admin": { "listColumns": [] },
+			"fields": [
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
+				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		}
 	],
@@ -183,14 +186,14 @@
 	],
 	"content": {
 		"categories": [
-			{ "id": "cat-food", "status": "published", "data": { "year": 2026, "title": "フード" } },
-			{ "id": "cat-drink", "status": "published", "data": { "year": 2026, "title": "ドリンク" } },
-			{ "id": "cat-marche", "status": "published", "data": { "year": 2026, "title": "マルシェ" } },
-			{ "id": "cat-workshop", "status": "published", "data": { "year": 2026, "title": "ワークショップ" } }
+			{ "id": "cat-food", "status": "published", "data": { "year": 2026, "title": "【サンプル】フード" } },
+			{ "id": "cat-drink", "status": "published", "data": { "year": 2026, "title": "【サンプル】ドリンク" } },
+			{ "id": "cat-goods", "status": "published", "data": { "year": 2026, "title": "【サンプル】雑貨・小物" } },
+			{ "id": "cat-workshop", "status": "published", "data": { "year": 2026, "title": "【サンプル】ワークショップ" } }
 		],
 		"stages": [
-			{ "id": "stage-main", "status": "published", "data": { "year": 2026, "title": "メインステージ" } },
-			{ "id": "stage-talk", "status": "published", "data": { "year": 2026, "title": "語り場テント" } }
+			{ "id": "stage-main", "status": "published", "data": { "year": 2026, "title": "【サンプル】メインステージ" } },
+			{ "id": "stage-sub", "status": "published", "data": { "year": 2026, "title": "【サンプル】サブステージ" } }
 		],
 		"exhibitors": [
 			{
@@ -199,7 +202,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "こめこパン工房",
+					"title": "【サンプル】こめこパン工房",
 					"category": "$ref:cat-food",
 					"catch": "地元のお米でつくる、もちもちの米粉パン。",
 					"description": "長岡のお米を米粉にして、毎朝パンを焼いています。",
@@ -212,7 +215,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "まちかどコーヒー",
+					"title": "【サンプル】まちかどコーヒー",
 					"category": "$ref:cat-drink",
 					"catch": "夜だけの限定ブレンドを用意します。",
 					"booth_number": "A-2"
@@ -224,8 +227,8 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "長岡おやさい便",
-					"category": "$ref:cat-marche",
+					"title": "【サンプル】長岡おやさい便",
+					"category": "$ref:cat-food",
 					"catch": "朝どれの野菜を、まちなかで。",
 					"booth_number": "B-1"
 				}
@@ -236,8 +239,8 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "古着とレコードの店 ゆうがた",
-					"category": "$ref:cat-marche",
+					"title": "【サンプル】古着とレコードの店 ゆうがた",
+					"category": "$ref:cat-goods",
 					"booth_number": "B-2"
 				}
 			},
@@ -247,7 +250,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "つまみ細工体験",
+					"title": "【サンプル】つまみ細工体験",
 					"category": "$ref:cat-workshop",
 					"catch": "布でつくる小さな花飾り。30分ほどでできます。",
 					"booth_number": "C-1"
@@ -259,7 +262,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "信濃川ほとりの焼き菓子屋さん（今年は新作のりんごタルトもあります）",
+					"title": "【サンプル】信濃川ほとりの焼き菓子屋さん（今年は新作のりんごタルトもあります）",
 					"category": "$ref:cat-food",
 					"catch": "りんごは長岡産。売り切れ次第終了です。今年は新作のりんごタルトと、焼きたてのフィナンシェ、季節のジャムも持っていきます。",
 					"booth_number": "A-3"
@@ -271,47 +274,47 @@
 				"id": "pf-opening",
 				"slug": "opening",
 				"status": "published",
-				"data": { "year": 2026, "title": "オープニング" }
+				"data": { "year": 2026, "title": "【サンプル】オープニング" }
 			},
 			{
 				"id": "pf-band",
 				"slug": "gakusei-band",
 				"status": "published",
-				"data": { "year": 2026, "title": "学生バンド" }
+				"data": { "year": 2026, "title": "【サンプル】学生バンド" }
 			},
 			{
 				"id": "pf-talk",
 				"slug": "yume-no-katariba",
 				"status": "published",
-				"data": { "year": 2026, "title": "夢の語り場トーク「まちで、やってみたいこと」" }
+				"data": { "year": 2026, "title": "【サンプル】夢の語り場トーク「まちで、やってみたいこと」" }
 			}
 		],
 		"slots": [
 			{
 				"id": "slot-1",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-opening", "stage": "$ref:stage-main", "starts_at": "2026-10-03T16:00:00+09:00", "ends_at": "2026-10-03T16:20:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-opening", "stage": "$ref:stage-main", "starts_at": "2026-11-14T14:00:00+09:00", "ends_at": "2026-11-14T14:20:00+09:00" }
 			},
 			{
 				"id": "slot-2",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-10-03T16:30:00+09:00", "ends_at": "2026-10-03T17:15:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-11-14T14:30:00+09:00", "ends_at": "2026-11-14T15:15:00+09:00" }
 			},
 			{
 				"id": "slot-3",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-talk", "stage": "$ref:stage-talk", "starts_at": "2026-10-03T17:30:00+09:00", "ends_at": "2026-10-03T18:30:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-talk", "stage": "$ref:stage-sub", "starts_at": "2026-11-14T15:30:00+09:00", "ends_at": "2026-11-14T16:30:00+09:00" }
 			},
 			{
 				"id": "slot-4",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-10-03T19:00:00+09:00", "ends_at": "2026-10-03T19:45:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-11-14T17:00:00+09:00", "ends_at": "2026-11-14T17:45:00+09:00" }
 			}
 		],
 		"sponsors": [
-			{ "id": "sp-a", "status": "published", "data": { "year": 2026, "title": "協賛企業A", "url": "https://example.com/" } },
-			{ "id": "sp-b", "status": "published", "data": { "year": 2026, "title": "協賛企業B", "url": "https://example.com/" } },
-			{ "id": "sp-c", "status": "published", "data": { "year": 2026, "title": "まちなか商店会C" } }
+			{ "id": "sp-a", "status": "published", "data": { "year": 2026, "title": "【サンプル】協賛企業A", "url": "https://example.com/" } },
+			{ "id": "sp-b", "status": "published", "data": { "year": 2026, "title": "【サンプル】協賛企業B", "url": "https://example.com/" } },
+			{ "id": "sp-c", "status": "published", "data": { "year": 2026, "title": "【サンプル】まちなか商店会C" } }
 		],
 		"notices": [
 			{
@@ -320,7 +323,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "雨天時の開催について（小雨決行、荒天の場合は前日18時にお知らせします）",
+					"title": "【サンプル】雨天時の開催について（小雨決行、荒天の場合は前日18時にお知らせします）",
 					"date": "2026-09-05T00:00:00+09:00",
 					"pinned": true,
 					"body": [
@@ -334,7 +337,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "出展者30組が決まりました",
+					"title": "【サンプル】出展者30組が決まりました",
 					"date": "2026-09-20T00:00:00+09:00",
 					"pinned": false
 				}
@@ -345,7 +348,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "ステージ出演者の募集を始めました",
+					"title": "【サンプル】ステージ出演者の募集を始めました",
 					"date": "2026-08-01T00:00:00+09:00",
 					"pinned": false
 				}
