@@ -22,7 +22,7 @@
 			"sortOrder": 1,
 			"admin": { "listColumns": ["year", "booth_number"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true, "searchable": true },
 				{ "slug": "category", "label": "カテゴリ", "type": "reference", "validation": { "targetCollection": "categories" } },
 				{ "slug": "catch", "label": "ひとこと", "type": "string", "searchable": true },
@@ -66,7 +66,7 @@
 			"sortOrder": 2,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true, "searchable": true },
 				{ "slug": "photo", "label": "写真", "type": "image" },
 				{ "slug": "description", "label": "紹介文", "type": "text", "searchable": true },
@@ -99,7 +99,7 @@
 			"dateField": "starts_at",
 			"admin": { "listColumns": ["year", "starts_at"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "performer", "label": "出演者", "type": "reference", "required": true, "validation": { "targetCollection": "performers" } },
 				{ "slug": "stage", "label": "ステージ", "type": "reference", "required": true, "validation": { "targetCollection": "stages" } },
 				{ "slug": "starts_at", "label": "開始の時刻", "type": "datetime", "required": true, "indexed": true },
@@ -111,10 +111,11 @@
 			"label": "ステージ",
 			"labelSingular": "ステージ",
 			"routable": false,
+			"group": "設定",
 			"sortOrder": 4,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		},
@@ -123,10 +124,11 @@
 			"label": "カテゴリ",
 			"labelSingular": "カテゴリ",
 			"routable": false,
+			"group": "設定",
 			"sortOrder": 5,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "名前", "type": "string", "required": true }
 			]
 		},
@@ -139,7 +141,7 @@
 			"sortOrder": 6,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "企業名", "type": "string", "required": true, "searchable": true },
 				{ "slug": "logo", "label": "ロゴ", "type": "image" },
 				{ "slug": "url", "label": "リンク", "type": "url" }
@@ -155,7 +157,7 @@
 			"dateField": "date",
 			"admin": { "listColumns": ["year", "date", "pinned"] },
 			"fields": [
-				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true, "defaultValue": 2026 },
+				{ "slug": "year", "label": "年", "type": "integer", "required": true, "indexed": true },
 				{ "slug": "title", "label": "タイトル", "type": "string", "required": true, "searchable": true },
 				{ "slug": "date", "label": "日付", "type": "datetime", "required": true, "indexed": true },
 				{ "slug": "body", "label": "本文", "type": "portableText", "searchable": true },

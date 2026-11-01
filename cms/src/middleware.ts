@@ -51,19 +51,33 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			return Response.json({ success: false, error: { code: "FORBIDDEN", message: PAST_MESSAGE } }, { status: 403 });
 		}
 	}
-	if (content && ADMIN_ONLY.has(content[1])) {
-		if (context.request.method !== "GET" && role < ADMIN) {
-			return Response.json({ success: false, error: { code: "FORBIDDEN", message: "カテゴリとステージは、管理者だけが変えられます" } }, { status: 403 });
-		}
-		// 一覧の画面（page を付けて呼ぶ）は絞らない。前の年のカテゴリとステージを管理者が見られなくなるため
-		// next() に書き換えた URL や Request を渡す方法は採らない。EmDash の一覧の API は context.url を読むので、絞り込みが届かないため
-		if (context.request.method === "GET" && !content[2] && !context.url.searchParams.has("page") && !context.url.searchParams.has("fieldFilters")) {
-			context.url.searchParams.set("fieldFilters", JSON.stringify({ year: await currentYear() }));
-		}
+	if (content && ADMIN_ONLY.has(content[1]) && context.request.method !== "GET" && role < ADMIN) {
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "カテゴリとステージは、管理者だけが変えられます" } }, { status: 403 });
+	}
+	// 一覧の画面（page を付けて呼ぶ）とカテゴリ・ステージの候補を今の年に絞る。出展者などの候補は絞らない。「前回の出展」で前の年を選ぶため
+	// next() に書き換えた URL や Request を渡す方法は採らない。EmDash の一覧の API は context.url を読むので、絞り込みが届かないため
+	const params = context.url.searchParams;
+	if (content && YEARLY.has(content[1]) && context.request.method === "GET" && !content[2] && !params.has("fieldFilters") && (params.has("page") || ADMIN_ONLY.has(content[1]))) {
+		params.set("fieldFilters", JSON.stringify({ year: await currentYear() }));
 	}
 	const res = await next();
 	if (context.request.method === "PUT" && res.ok && MEDIA_REPLACE.test(pathname)) {
 		waitUntil(requestRebuild(console.warn).catch(console.error));
+	}
+	// 年の項目の既定値をスキーマに持たせる方法は採らない。今の年を変える道（設定の画面・MCP・API）ごとに、全部のコレクションの既定値も直すことになるため
+	if (context.request.method === "GET" && pathname === "/_emdash/api/manifest" && res.ok) {
+		const body = (await res.json()) as { data?: { hash?: string; collections?: Record<string, { fields?: Record<string, { defaultValue?: unknown }> }> } };
+		const manifest = body.data ?? {};
+		const year = await currentYear();
+		for (const slug of YEARLY) {
+			const field = manifest.collections?.[slug]?.fields?.year;
+			if (field) field.defaultValue = year;
+		}
+		// 管理画面が hash で manifest を使い回しても、今の年を変えたら読み直させる
+		manifest.hash = `${manifest.hash}-${year}`;
+		const headers = new Headers(res.headers);
+		headers.delete("content-length");
+		return new Response(JSON.stringify(body), { status: res.status, headers });
 	}
 	if ((env as { PREVIEW?: string }).PREVIEW && res.headers.get("content-type")?.startsWith("text/html")) {
 		return new HTMLRewriter().on("body", { element: (body) => void body.append(PREVIEW_BADGE, { html: true }) }).transform(res);
