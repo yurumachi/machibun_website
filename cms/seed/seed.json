@@ -185,14 +185,14 @@
 	],
 	"content": {
 		"categories": [
-			{ "id": "cat-food", "status": "published", "data": { "year": 2026, "title": "フード" } },
-			{ "id": "cat-drink", "status": "published", "data": { "year": 2026, "title": "ドリンク" } },
-			{ "id": "cat-marche", "status": "published", "data": { "year": 2026, "title": "マルシェ" } },
-			{ "id": "cat-workshop", "status": "published", "data": { "year": 2026, "title": "ワークショップ" } }
+			{ "id": "cat-food", "status": "published", "data": { "year": 2026, "title": "【サンプル】フード" } },
+			{ "id": "cat-drink", "status": "published", "data": { "year": 2026, "title": "【サンプル】ドリンク" } },
+			{ "id": "cat-goods", "status": "published", "data": { "year": 2026, "title": "【サンプル】雑貨・小物" } },
+			{ "id": "cat-workshop", "status": "published", "data": { "year": 2026, "title": "【サンプル】ワークショップ" } }
 		],
 		"stages": [
-			{ "id": "stage-main", "status": "published", "data": { "year": 2026, "title": "メインステージ" } },
-			{ "id": "stage-talk", "status": "published", "data": { "year": 2026, "title": "語り場テント" } }
+			{ "id": "stage-main", "status": "published", "data": { "year": 2026, "title": "【サンプル】メインステージ" } },
+			{ "id": "stage-sub", "status": "published", "data": { "year": 2026, "title": "【サンプル】サブステージ" } }
 		],
 		"exhibitors": [
 			{
@@ -201,7 +201,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "こめこパン工房",
+					"title": "【サンプル】こめこパン工房",
 					"category": "$ref:cat-food",
 					"catch": "地元のお米でつくる、もちもちの米粉パン。",
 					"description": "長岡のお米を米粉にして、毎朝パンを焼いています。",
@@ -214,7 +214,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "まちかどコーヒー",
+					"title": "【サンプル】まちかどコーヒー",
 					"category": "$ref:cat-drink",
 					"catch": "夜だけの限定ブレンドを用意します。",
 					"booth_number": "A-2"
@@ -226,8 +226,8 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "長岡おやさい便",
-					"category": "$ref:cat-marche",
+					"title": "【サンプル】長岡おやさい便",
+					"category": "$ref:cat-food",
 					"catch": "朝どれの野菜を、まちなかで。",
 					"booth_number": "B-1"
 				}
@@ -238,8 +238,8 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "古着とレコードの店 ゆうがた",
-					"category": "$ref:cat-marche",
+					"title": "【サンプル】古着とレコードの店 ゆうがた",
+					"category": "$ref:cat-goods",
 					"booth_number": "B-2"
 				}
 			},
@@ -249,7 +249,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "つまみ細工体験",
+					"title": "【サンプル】つまみ細工体験",
 					"category": "$ref:cat-workshop",
 					"catch": "布でつくる小さな花飾り。30分ほどでできます。",
 					"booth_number": "C-1"
@@ -261,7 +261,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "信濃川ほとりの焼き菓子屋さん（今年は新作のりんごタルトもあります）",
+					"title": "【サンプル】信濃川ほとりの焼き菓子屋さん（今年は新作のりんごタルトもあります）",
 					"category": "$ref:cat-food",
 					"catch": "りんごは長岡産。売り切れ次第終了です。今年は新作のりんごタルトと、焼きたてのフィナンシェ、季節のジャムも持っていきます。",
 					"booth_number": "A-3"
@@ -273,47 +273,47 @@
 				"id": "pf-opening",
 				"slug": "opening",
 				"status": "published",
-				"data": { "year": 2026, "title": "オープニング" }
+				"data": { "year": 2026, "title": "【サンプル】オープニング" }
 			},
 			{
 				"id": "pf-band",
 				"slug": "gakusei-band",
 				"status": "published",
-				"data": { "year": 2026, "title": "学生バンド" }
+				"data": { "year": 2026, "title": "【サンプル】学生バンド" }
 			},
 			{
 				"id": "pf-talk",
 				"slug": "yume-no-katariba",
 				"status": "published",
-				"data": { "year": 2026, "title": "夢の語り場トーク「まちで、やってみたいこと」" }
+				"data": { "year": 2026, "title": "【サンプル】夢の語り場トーク「まちで、やってみたいこと」" }
 			}
 		],
 		"slots": [
 			{
 				"id": "slot-1",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-opening", "stage": "$ref:stage-main", "starts_at": "2026-10-03T16:00:00+09:00", "ends_at": "2026-10-03T16:20:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-opening", "stage": "$ref:stage-main", "starts_at": "2026-11-14T14:00:00+09:00", "ends_at": "2026-11-14T14:20:00+09:00" }
 			},
 			{
 				"id": "slot-2",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-10-03T16:30:00+09:00", "ends_at": "2026-10-03T17:15:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-11-14T14:30:00+09:00", "ends_at": "2026-11-14T15:15:00+09:00" }
 			},
 			{
 				"id": "slot-3",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-talk", "stage": "$ref:stage-talk", "starts_at": "2026-10-03T17:30:00+09:00", "ends_at": "2026-10-03T18:30:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-talk", "stage": "$ref:stage-sub", "starts_at": "2026-11-14T15:30:00+09:00", "ends_at": "2026-11-14T16:30:00+09:00" }
 			},
 			{
 				"id": "slot-4",
 				"status": "published",
-				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-10-03T19:00:00+09:00", "ends_at": "2026-10-03T19:45:00+09:00" }
+				"data": { "year": 2026, "performer": "$ref:pf-band", "stage": "$ref:stage-main", "starts_at": "2026-11-14T17:00:00+09:00", "ends_at": "2026-11-14T17:45:00+09:00" }
 			}
 		],
 		"sponsors": [
-			{ "id": "sp-a", "status": "published", "data": { "year": 2026, "title": "協賛企業A", "url": "https://example.com/" } },
-			{ "id": "sp-b", "status": "published", "data": { "year": 2026, "title": "協賛企業B", "url": "https://example.com/" } },
-			{ "id": "sp-c", "status": "published", "data": { "year": 2026, "title": "まちなか商店会C" } }
+			{ "id": "sp-a", "status": "published", "data": { "year": 2026, "title": "【サンプル】協賛企業A", "url": "https://example.com/" } },
+			{ "id": "sp-b", "status": "published", "data": { "year": 2026, "title": "【サンプル】協賛企業B", "url": "https://example.com/" } },
+			{ "id": "sp-c", "status": "published", "data": { "year": 2026, "title": "【サンプル】まちなか商店会C" } }
 		],
 		"notices": [
 			{
@@ -322,7 +322,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "雨天時の開催について（小雨決行、荒天の場合は前日18時にお知らせします）",
+					"title": "【サンプル】雨天時の開催について（小雨決行、荒天の場合は前日18時にお知らせします）",
 					"date": "2026-09-05T00:00:00+09:00",
 					"pinned": true,
 					"body": [
@@ -336,7 +336,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "出展者30組が決まりました",
+					"title": "【サンプル】出展者30組が決まりました",
 					"date": "2026-09-20T00:00:00+09:00",
 					"pinned": false
 				}
@@ -347,7 +347,7 @@
 				"status": "published",
 				"data": {
 					"year": 2026,
-					"title": "ステージ出演者の募集を始めました",
+					"title": "【サンプル】ステージ出演者の募集を始めました",
 					"date": "2026-08-01T00:00:00+09:00",
 					"pinned": false
 				}
