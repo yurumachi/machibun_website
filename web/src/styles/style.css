@@ -563,8 +563,6 @@ html { scroll-padding-block: calc(var(--header-h) + var(--space-2)) calc(var(--t
   .hero-side--bulb    { width: min(5rem, calc(50vw - 38rem)); left: 8vw; top: 0; }
   .hero-side--balloon { width: min(6rem, calc(50vw - 38rem)); right: 5vw; top: 14vh; }
   .hero-side--garland { width: min(14rem, calc(50vw - 36rem)); right: 2vw; bottom: 16vh; }
-  /* 出展者・協賛の一覧は本文より広げて横に多く並べる（文章の列は広げない） */
-  #exhibitors > .container, #sponsors > .container { max-width: calc(88rem + var(--page-margin) * 2); }
 }
 .site-header .global-nav { margin-left: auto; }
 .site-header__inner { flex-wrap: nowrap; }
