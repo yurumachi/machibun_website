@@ -99,25 +99,25 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
    2. （済み、2026-11-01）PR #26 で `preview` に取り込んだ。Preview で、favicon・アイコン・共有の画像・sitemap・robots.txt が 200 で返り、`noindex` が入ることを確かめた。robots.txt は、Cloudflare の content signal の後ろに自前の行が続く。
    3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。イラストの直し（PR #25）も一緒に本番に入るので、本番で PageSpeed を測り、#3 を閉じる。
-18. （2026-11-01、`feat/admin-guard`）実行委員（Editor）は今の年の中身だけを扱い、今の年・カテゴリ・ステージと前の年の中身は変えられないようにした（ADR 0008）。プラグイン `cms/src/plugins/admin-guard.ts` と `cms/src/middleware.ts`。
+18. （2026-11-01、`feat/admin-guard`）実行委員（Editor）は開催年の中身だけを扱い、開催年・カテゴリ・ステージと過去の開催のデータは変えられないようにした（ADR 0008）。プラグイン `cms/src/plugins/admin-guard.ts` と `cms/src/middleware.ts`。
    - 手元で、画面から実行委員と管理者の操作を確かめた。項目と結果は `docs/notes/admin-guard-checks.md`。EmDash を上げたときは、これを流す。
    - 絞り込みは `next()` に URL や Request を渡しても EmDash に届かなかった（一覧の API が `context.url` を読む）。`context.url` に `fieldFilters` を足している。
    - 複製は保存のフックを通らないので、実行委員の複製は `middleware.ts` で断る。
-   - 前の年の中身の削除・完全な削除・復元は、管理者だけができる。削除のフックには操作した人が渡らず、復元にはフックが無いので、`middleware.ts` で実行委員を断る。
-   - MCP は同じ Worker の `/_emdash/api/mcp` で動き、`middleware.ts` を通る。実行委員の MCP は一律に断る。管理者の MCP での保存には操作した人が渡り、前の年の中身も直せる。
-   - 版の復元（`/_emdash/api/revisions/<id>/restore`）は保存のフックを通らないので、実行委員が前の年の中身に行うものは `middleware.ts` で断る。予約公開はプラグインの `content:beforeSchedule` で断る。
-   - 今の年を1か所にまとめたこと、一覧の絞り込み、「前の年の中身」のページは 19。
-   - `preview` での確認: 管理者で、「イベント設定」→「今の年」に今の年が出ることを確かめる。実行委員のアカウントは Preview に無いので、実行委員の操作は手元でだけ確かめた。
-19. （2026-11-01、`feat/current-year`）今の年をプラグインの設定の1か所にまとめた（ADR 0009）。管理者が、サイドバーの「イベント設定」→「今の年」のページか、MCP の道具 `admin-guard__current_year` で変える。
-   - 年の既定値は `middleware.ts` が manifest で今の年に置き換え、API・MCP で年を入れずに作ったら保存のフックで今の年を入れる。年の項目の必須は外せなかった（EmDash が中身の移行を求める）。
-   - 一覧の画面は、全員に今の年の中身だけを出す。前の年の中身は、プラグインのページ「前の年の中身」から開く。
-   - カテゴリとステージと「今の年」のページは、サイドバーの「イベント設定」のフォルダに入れた（コレクションの `group`）。seed も直した。
+   - 過去の開催のデータの削除・完全な削除・復元は、管理者だけができる。削除のフックには操作した人が渡らず、復元にはフックが無いので、`middleware.ts` で実行委員を断る。
+   - MCP は同じ Worker の `/_emdash/api/mcp` で動き、`middleware.ts` を通る。実行委員の MCP は一律に断る。管理者の MCP での保存には操作した人が渡り、過去の開催のデータも直せる。
+   - 版の復元（`/_emdash/api/revisions/<id>/restore`）は保存のフックを通らないので、実行委員が過去の開催のデータに行うものは `middleware.ts` で断る。予約公開はプラグインの `content:beforeSchedule` で断る。
+   - 開催年を1か所にまとめたこと、一覧の絞り込み、「過去の開催」のページは 19。
+   - `preview` での確認: 管理者で、「イベント設定」→「開催年」に開催年が出ることを確かめる。実行委員のアカウントは Preview に無いので、実行委員の操作は手元でだけ確かめた。
+19. （2026-11-01、`feat/current-year`）開催年をプラグインの設定の1か所にまとめた（ADR 0009）。管理者が、サイドバーの「イベント設定」→「開催年」のページか、MCP の道具 `admin-guard__current_year` で変える。
+   - 年の既定値は `middleware.ts` が manifest で開催年に置き換え、API・MCP で年を入れずに作ったら保存のフックで開催年を入れる。年の項目の必須は外せなかった（EmDash が中身の移行を求める）。
+   - 一覧の画面は、全員に開催年の中身だけを出す。過去の開催のデータは、プラグインのページ「過去の開催」から開く。
+   - カテゴリとステージと「開催年」のページは、サイドバーの「イベント設定」のフォルダに入れた（コレクションの `group`）。seed も直した。
    - 手元で、`docs/notes/admin-guard-checks.md` の E29〜E32・A15・A16 などを確かめた。
    - Preview と本番では、管理者が次を1回ずつ行う（seed は空の DB にしか入らないため）。
      1. カテゴリとステージのコレクションの `group` を「イベント設定」にする（MCP の `schema_update_collection`、または画面のスキーマ）。
      2. 7つのコレクションの年の項目の既定値（2026）を消す。manifest で上書きしているので使われないが、残すとスキーマの画面で紛らわしい。
-     3. MCP で今の年を変えるなら、プラグイン → admin-guard で MCP の道具を有効にする。
-   - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（今の年だけ）とカテゴリの候補（今の年だけ）も API で確かめた。3 は未。manifest とプラグインのページ（「前の年の中身」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
+     3. MCP で開催年を変えるなら、プラグイン → admin-guard で MCP の道具を有効にする。
+   - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（開催年だけ）とカテゴリの候補（開催年だけ）も API で確かめた。3 は未。manifest とプラグインのページ（「過去の開催」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
    - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で登録した（`~/.claude.json`、repo には入らない）。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。本番の token はまだ無い。
 
 ## いまの状態
