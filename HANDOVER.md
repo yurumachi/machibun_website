@@ -99,6 +99,7 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
    2. （済み、2026-11-01）PR #26 で `preview` に取り込んだ。Preview で、favicon・アイコン・共有の画像・sitemap・robots.txt が 200 で返り、`noindex` が入ることを確かめた。robots.txt は、Cloudflare の content signal の後ろに自前の行が続く。
    3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。イラストの直し（PR #25）も一緒に本番に入るので、本番で PageSpeed を測り、#3 を閉じる。
+      - （2026-11-02、PR #46）`main` に取り込んだ。本番の PageSpeed で「Improve image delivery」がモバイル・デスクトップとも 0 件になり、#3 を閉じた。点はモバイル 85（FCP 0.8s・LCP 4.1s）、デスクトップ 98。設計の「本番に入れた後に確かめること」と、本番の CMS の一度きりの変更（19 の手順 1〜6）は、まだ行っていない。
 18. （2026-11-01、`feat/admin-guard`）実行委員（Editor）は開催年の中身だけを扱い、開催年・カテゴリ・ステージと過去の開催のデータは変えられないようにした（ADR 0008）。プラグイン `cms/src/plugins/admin-guard.ts` と `cms/src/middleware.ts`。
    - 手元で、画面から実行委員と管理者の操作を確かめた。項目と結果は `docs/notes/admin-guard-checks.md`。EmDash を上げたときは、これを流す。
    - 絞り込みは `next()` に URL や Request を渡しても EmDash に届かなかった（一覧の API が `context.url` を読む）。`context.url` に `fieldFilters` を足している。
