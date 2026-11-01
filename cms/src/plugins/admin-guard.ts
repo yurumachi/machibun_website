@@ -152,7 +152,9 @@ export function createPlugin() {
 				if (!YEARLY.has(event.collection)) return;
 				const year = await currentYear();
 				// 年の項目の既定値（コンテンツの種類の設定）で入れる方法は採らない。開催年を変えるたびに、全部のコレクションの既定値も直すことになるため
-				const content = event.isNew && isEmpty(event.content.year) ? { ...event.content, year } : event.content;
+				const withYear = event.isNew && isEmpty(event.content.year) ? { ...event.content, year } : event.content;
+				// 出演者の名前を表示名に入れる方法は採らない。保存のフックには参照の欄（出演者・ステージ）が渡らないため
+				const content = event.collection === "slots" && typeof withYear.starts_at === "string" ? { ...withYear, title: nameOf(withYear) } : withYear;
 				if (!event.isNew && "year" in content && isEmpty(content.year)) throw new ContentSaveRejectedError("年を入力してください");
 				if (isAdmin(event.actor)) return content;
 				if (ADMIN_ONLY.has(event.collection)) throw new ContentSaveRejectedError(ADMIN_ONLY_MESSAGE);
