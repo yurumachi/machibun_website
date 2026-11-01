@@ -54,7 +54,7 @@ async function yearPage(ctx: RouteContext, toast?: { message: string; type: "suc
 		{ type: "header", text: "開催年" },
 		{ type: "context", text: "管理画面で登録・編集する際のデフォルトの開催年の設定です。" },
 		{ type: "context", text: `新規作成する${Object.values(LABELS).join("・")}には、デフォルトでこの開催年が設定されます。一覧と選択肢には、この開催年のデータが表示されます。実行委員はこの開催年のデータのみ登録・編集できます。` },
-		{ type: "context", text: "公開サイトに表示されるデータの年は、公開サイトのプログラムの設定（web/src/lib/cms.ts の YEAR）で決まります。新しい年の公開サイトを作るときに、開発担当が変更します。" },
+		{ type: "context", text: "公開サイトに表示するデータの年と開催日時は、公開サイトのコードで設定しています。変更するには、コードの変更が必要です。" },
 	];
 	if (isAdmin(ctx.user)) {
 		blocks.push({ type: "form", block_id: "year", fields: [{ type: "number_input", action_id: "year", label: "開催年", min: FIRST_YEAR, initial_value: year }], submit: { label: "保存", action_id: "save_year" } });
