@@ -254,14 +254,14 @@ tbody th { font-weight: var(--fw-bold); white-space: nowrap; }
 }
 .timetable__filter button[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 .timetable__filter[hidden], .timetable__stage[hidden] { display: none; }
-.timetable__scroll { overflow-x: auto; }
-.timetable__grid { display: flex; gap: var(--space-1); }
-.timetable__axis { flex: 0 0 3.5rem; position: relative; margin-top: var(--head); height: calc(var(--rows) * var(--step)); }
+.timetable__scroll { overflow-x: auto; overflow-y: hidden; }
+.timetable__grid { display: flex; gap: var(--space-1); padding-bottom: var(--space-2); }
+.timetable__axis { flex: 0 0 3rem; position: relative; margin-top: var(--head); height: calc(var(--rows) * var(--step)); }
 .timetable__axis span {
   position: absolute; top: calc(var(--row) * var(--step)); transform: translateY(-50%);
   font-size: var(--fs-14); color: var(--color-text-sub); font-variant-numeric: tabular-nums;
 }
-.timetable__stage { flex: 1 1 0; min-width: 9rem; }
+.timetable__stage { flex: 1 1 0; min-width: 8rem; }
 .timetable__name {
   height: var(--head); margin: 0; padding: 0 var(--space-1); display: flex; align-items: center; justify-content: center;
   font-size: var(--fs-16); text-align: center; line-height: 1.3;
