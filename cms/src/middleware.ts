@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { env, waitUntil } from "cloudflare:workers";
-import { ADMIN, ADMIN_ONLY, PAST_MESSAGE, YEARLY, currentYear } from "./plugins/admin-guard";
+import { ADMIN, ADMIN_ONLY, ADMIN_ONLY_MESSAGE, PAST_MESSAGE, YEARLY, currentYear } from "./plugins/admin-guard";
 import { requestRebuild } from "./plugins/rebuild-web";
 
 const MEDIA_REPLACE = /^\/_emdash\/api\/media\/[^/]+\/replace$/;
@@ -20,7 +20,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const role = context.locals.user?.role ?? 0;
 	// MCP の要求の中身（呼ぶ道具の名前）を読んで一部だけ断る方法は採らない。複数の要求をまとめる形や slug での指定まで追うことになり、EmDash を上げたときに壊れやすいため
 	if (pathname === "/_emdash/api/mcp" && context.locals.user && role < ADMIN) {
-		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "MCP は、管理者だけが使えます" } }, { status: 403 });
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "MCP は、管理者のみ利用できます" } }, { status: 403 });
 	}
 	const revision = context.request.method === "POST" ? REVISION_RESTORE.exec(pathname) : null;
 	if (revision && role < ADMIN) {
@@ -37,9 +37,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 	}
 	const content = CONTENT_API.exec(pathname);
-	// 複製の後に年を今の年へ直す方法は採らない。複製は保存のフックを通らず、写った前の年の下書きを実行委員が直せなくなるため
+	// 複製の後に年を開催年へ直す方法は採らない。複製は保存のフックを通らず、写った前の年の下書きを実行委員が直せなくなるため
 	if (content && YEARLY.has(content[1]) && content[2]?.endsWith("/duplicate") && role < ADMIN) {
-		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "複製は、管理者だけができます" } }, { status: 403 });
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "複製は、管理者のみ行えます" } }, { status: 403 });
 	}
 	// プラグインの content:beforeDelete で断る方法は採らない。削除のフックには操作した人が渡らず、管理者の削除まで断ることになるため。復元にはフックが無い
 	const sub = content?.[2] ?? "";
@@ -52,9 +52,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 	}
 	if (content && ADMIN_ONLY.has(content[1]) && context.request.method !== "GET" && role < ADMIN) {
-		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "カテゴリとステージは、管理者だけが変えられます" } }, { status: 403 });
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: ADMIN_ONLY_MESSAGE } }, { status: 403 });
 	}
-	// 一覧の画面（page を付けて呼ぶ）とカテゴリ・ステージの候補を今の年に絞る。出展者などの候補は絞らない。「前回の出展」で前の年を選ぶため
+	// 一覧の画面（page を付けて呼ぶ）とカテゴリ・ステージの候補を開催年に絞る。出展者などの候補は絞らない。「前回の出展」で前の年を選ぶため
 	// next() に書き換えた URL や Request を渡す方法は採らない。EmDash の一覧の API は context.url を読むので、絞り込みが届かないため
 	const params = context.url.searchParams;
 	if (content && YEARLY.has(content[1]) && context.request.method === "GET" && !content[2] && !params.has("fieldFilters") && (params.has("page") || ADMIN_ONLY.has(content[1]))) {
@@ -64,7 +64,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.request.method === "PUT" && res.ok && MEDIA_REPLACE.test(pathname)) {
 		waitUntil(requestRebuild(console.warn).catch(console.error));
 	}
-	// 年の項目の既定値をスキーマに持たせる方法は採らない。今の年を変える道（設定の画面・MCP・API）ごとに、全部のコレクションの既定値も直すことになるため
+	// 年の項目の既定値をスキーマに持たせる方法は採らない。開催年を変える道（開催年のページ・MCP・API）ごとに、全部のコレクションの既定値も直すことになるため
 	if (context.request.method === "GET" && pathname === "/_emdash/api/manifest" && res.ok) {
 		const body = (await res.json()) as { data?: { hash?: string; collections?: Record<string, { fields?: Record<string, { defaultValue?: unknown }> }> } };
 		const manifest = body.data ?? {};
@@ -73,7 +73,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			const field = manifest.collections?.[slug]?.fields?.year;
 			if (field) field.defaultValue = year;
 		}
-		// 管理画面が hash で manifest を使い回しても、今の年を変えたら読み直させる
+		// 管理画面が hash で manifest を使い回しても、開催年を変えたら読み直させる
 		manifest.hash = `${manifest.hash}-${year}`;
 		const headers = new Headers(res.headers);
 		headers.delete("content-length");
