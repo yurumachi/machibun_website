@@ -15,7 +15,7 @@
 | 前の年の中身を古い版に戻す・公開を予約する | できる | できない |
 | MCP で操作する | できる | できない |
 
-- 今の年: 自作プラグイン（`cms/src/plugins/admin-guard.ts`）の設定に置く。プラグインの設定を変えられるのは Admin だけ（`plugins:manage`）。
+- 今の年: 自作プラグイン（`cms/src/plugins/admin-guard.ts`）の設定に置く。変えられるのは Admin だけで、「今の年」のページは Admin でない人の変更を断り、MCP の道具の経路は `plugins:manage` を求める（ADR 0009）。
 - 実行委員の保存・公開・公開の取り消し・公開の予約: プラグインのフック（`content:beforeSave`・`content:beforePublish`・`content:beforeUnpublish`・`content:beforeSchedule`）で、カテゴリ・ステージと、前の年の中身を断る。年が今の年でない保存も断る。
 - 複製: 保存のフックを通らず、前の年の年がそのまま写る。`middleware.ts` で実行委員の複製を断る。
 - 削除・完全な削除・ゴミ箱からの復元: `middleware.ts` で、実行委員が前の年の中身に対して行う要求を断る。削除のフック（`content:beforeDelete`）には操作した人が渡らず、復元にはフックが無いため、プラグインでは管理者と実行委員を分けられない。カテゴリとステージの要求は、GET 以外をすべて `middleware.ts` で実行委員から断る。
