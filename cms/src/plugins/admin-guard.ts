@@ -1,5 +1,5 @@
 import { z } from "astro/zod";
-import { ContentSaveRejectedError, definePlugin, getPluginSetting, type ActorInfo, type PluginContext } from "emdash";
+import { ContentSaveRejectedError, definePlugin, getPluginSetting, type ActorInfo, type PluginContext, type RouteContext } from "emdash";
 
 // ADR 0008。@emdash-cms/auth の Role を読む方法は採らない。cms の依存に足すことになるため
 export const ADMIN = 50;
@@ -46,13 +46,45 @@ async function pastPage(ctx: PluginContext) {
 	return { blocks };
 }
 
+const YEAR_GROUP = "イベント設定";
+
+async function yearPage(ctx: RouteContext, toast?: { message: string; type: "success" | "error" }) {
+	const year = await currentYear();
+	const blocks: unknown[] = [
+		{ type: "header", text: "今の年" },
+		{ type: "context", text: "管理画面で、いま入力している年。一覧と候補に出る中身、新しく作る中身の年、実行委員が扱える中身がこの年になる。公開サイトに載せる年は別に決める（ADR 0009）。" },
+	];
+	if (isAdmin(ctx.user)) {
+		blocks.push({ type: "form", block_id: "year", fields: [{ type: "number_input", action_id: "year", label: "今の年", min: FIRST_YEAR, initial_value: year }], submit: { label: "変える", action_id: "save_year" } });
+		blocks.push({ type: "context", text: "次の年に変えたら、その年のカテゴリとステージを作る。それまでの年の中身は、実行委員には変えられなくなる。" });
+	} else {
+		blocks.push({ type: "fields", fields: [{ label: "今の年", value: String(year) }] });
+		blocks.push({ type: "context", text: "変えられるのは管理者だけ。" });
+	}
+	return toast ? { blocks, toast } : { blocks };
+}
+
+const interaction = z.object({ type: z.string(), page: z.string().optional(), action_id: z.string().optional(), values: z.record(z.string(), z.unknown()).optional() });
+
+async function adminRoute(ctx: RouteContext) {
+	const input = interaction.parse(ctx.input ?? {});
+	if (input.type === "form_submit" && input.action_id === "save_year") {
+		if (!isAdmin(ctx.user)) return yearPage(ctx, { message: "今の年を変えられるのは管理者だけです", type: "error" });
+		const parsed = yearInput.safeParse({ year: Number(input.values?.year) });
+		if (!parsed.success || parsed.data.year === undefined) return yearPage(ctx, { message: `${FIRST_YEAR} 以上の年を入れてください`, type: "error" });
+		await ctx.settings.set("currentYear", parsed.data.year);
+		return yearPage(ctx, { message: `今の年を ${parsed.data.year} にしました`, type: "success" });
+	}
+	return input.page === "/year" ? yearPage(ctx) : pastPage(ctx);
+}
+
 export function createPlugin() {
 	return definePlugin({
 		id: "admin-guard",
 		version: "0.1.0",
 		capabilities: ["content:write", "hooks.content-policy:register"],
 		routes: {
-			admin: { permission: "content:read", handler: async (ctx) => pastPage(ctx) },
+			admin: { permission: "content:read", handler: adminRoute },
 			"current-year": {
 				permission: "plugins:manage",
 				handler: async (ctx) => {
@@ -73,10 +105,11 @@ export function createPlugin() {
 			},
 		},
 		admin: {
-			pages: [{ path: "/past", label: "前の年の中身", icon: "history" }],
-			settingsSchema: {
-				currentYear: { type: "number", label: "今の年", description: "実行委員が扱える中身の年。一覧、カテゴリとステージの候補に出る中身と、新しく作る中身の年もこの年になる", default: FIRST_YEAR, min: FIRST_YEAR },
-			},
+			// settingsSchema（プラグインの設定の画面）にも置く方法は採らない。今の年を変える画面が2つになり、プラグインの一覧の奥にあって見つけにくいため
+			pages: [
+				{ path: "/year", label: "今の年", icon: "calendar", group: YEAR_GROUP },
+				{ path: "/past", label: "前の年の中身", icon: "history" },
+			],
 		},
 		hooks: {
 			"content:beforeSave": async (event, ctx) => {

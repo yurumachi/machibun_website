@@ -111,7 +111,7 @@
 			"label": "ステージ",
 			"labelSingular": "ステージ",
 			"routable": false,
-			"group": "設定",
+			"group": "イベント設定",
 			"sortOrder": 4,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
@@ -124,7 +124,7 @@
 			"label": "カテゴリ",
 			"labelSingular": "カテゴリ",
 			"routable": false,
-			"group": "設定",
+			"group": "イベント設定",
 			"sortOrder": 5,
 			"admin": { "listColumns": ["year"] },
 			"fields": [
