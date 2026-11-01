@@ -122,6 +122,8 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    - Preview: 1 と 2 は 2026-11-01 に MCP で済ませ、スキーマを読み直して確かめた（1 は「設定」で作った後、「イベント設定」に直した）。新しく作る画面の年に 2026 が入ることと、フォルダの中身は user が画面で確かめた。一覧（開催年だけ）とカテゴリの候補（開催年だけ）も API で確かめた。4 と 5 は 2026-11-02 に MCP と API で済ませた。3 は未。manifest とプラグインのページ（「過去の開催」）は token では開けない（`admin` の権限が要る）ので、画面で確かめる。
    - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で登録した（`~/.claude.json`、repo には入らない）。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。本番の token はまだ無い。
 
+   - （2026-11-02）見本のデータは、名前の先頭に「【サンプル】」を付けた（管理画面と公開サイトで本物と見分けるため）。出展カテゴリはフード・ドリンク・雑貨・小物・ワークショップ、ステージはメインステージ・サブステージ、出演時間は開催日（11月14日）の 14〜18時にした。Preview の中身は全部消して（ゴミ箱からも）、この seed の見本 25 件を入れ直した。seed は空の DB にしか入らないので、参照の無い項目は MCP の `content_create`、参照のある項目（出展カテゴリ・出演者・ステージ）は REST の `POST /_emdash/api/content/<コレクション>` の `references` で入れ、MCP の `content_publish` で公開した（MCP の `content_create` は参照を受け付けない）。
+
 ## いまの状態
 
 - GitHub の repo は `yurumachi/machibun_website`（2026-10-16 に `machibun2026_website` から名前を変えた）。Workers Builds は repo の id でつながっていて、名前を変えたあとも、手でのビルドも push でのビルドも通った。
