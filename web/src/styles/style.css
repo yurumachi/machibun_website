@@ -272,14 +272,14 @@ tbody th { font-weight: var(--fw-bold); white-space: nowrap; }
   grid-template-rows: repeat(var(--rows), var(--step));
   background: repeating-linear-gradient(to bottom, var(--color-divider) 0 1px, transparent 1px var(--hour));
 }
+/* 高さを出演の長さだけで決める方法は採らない。短い出演では名前が読めなくなるため。中身が収まらないときは下に伸ばし、名前は 3 行で打ち切る */
 .timetable__slot {
+  align-self: start; min-height: calc(100% - 4px); position: relative;
   margin: 2px 0; padding: 0.25rem var(--space-1); overflow: hidden;
   background: var(--color-surface); border-left: 4px solid var(--stage-color); border-radius: var(--radius-s);
 }
 .timetable__time { display: block; font-size: var(--fs-14); color: var(--color-text-sub); font-variant-numeric: tabular-nums; }
-.timetable__performer { font-weight: var(--fw-bold); line-height: 1.4; }
-/* 30 分未満の出演は高さが足りないので、名前を 1 行にして末尾を省く */
-.timetable__slot--short .timetable__performer { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timetable__performer { font-weight: var(--fw-bold); line-height: 1.4; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--lines); line-clamp: var(--lines); overflow: hidden; }
 
 /* ---------- Accordion (details/summary) ---------- */
 .accordion { border-top: 1px solid var(--color-divider); }
