@@ -52,8 +52,8 @@ async function yearPage(ctx: RouteContext, toast?: { message: string; type: "suc
 	const year = await currentYear();
 	const blocks: unknown[] = [
 		{ type: "header", text: "開催年" },
-		{ type: "context", text: "管理画面で登録・編集する際の、デフォルトの開催年の設定です。" },
-		{ type: "context", text: `新規作成する${Object.values(LABELS).join("・")}には、デフォルトでこの開催年が設定されます。一覧と選択肢には、この開催年のデータが表示されます。実行委員は、この開催年のデータのみ登録・編集できます。` },
+		{ type: "context", text: "管理画面で登録・編集する際のデフォルトの開催年の設定です。" },
+		{ type: "context", text: `新規作成する${Object.values(LABELS).join("・")}には、デフォルトでこの開催年が設定されます。一覧と選択肢には、この開催年のデータが表示されます。実行委員はこの開催年のデータのみ登録・編集できます。` },
 		{ type: "context", text: "公開サイトに表示されるデータの年は、公開サイトのプログラムの設定（web/src/lib/cms.ts の YEAR）で決まります。新しい年の公開サイトを作るときに、開発担当が変更します。" },
 	];
 	if (isAdmin(ctx.user)) {
@@ -61,7 +61,7 @@ async function yearPage(ctx: RouteContext, toast?: { message: string; type: "suc
 		blocks.push({ type: "context", text: "開催年を変更したら、その年のカテゴリとステージを登録してください。変更前の年のデータは、実行委員は編集できなくなります。" });
 	} else {
 		blocks.push({ type: "fields", fields: [{ label: "開催年", value: `${year}年` }] });
-		blocks.push({ type: "context", text: "開催年の変更は、管理者のみ行えます。" });
+		blocks.push({ type: "context", text: "開催年の変更は管理者のみ行えます。" });
 	}
 	return toast ? { blocks, toast } : { blocks };
 }
@@ -71,11 +71,11 @@ const interaction = z.object({ type: z.string(), page: z.string().optional(), ac
 async function adminRoute(ctx: RouteContext) {
 	const input = interaction.parse(ctx.input ?? {});
 	if (input.type === "form_submit" && input.action_id === "save_year") {
-		if (!isAdmin(ctx.user)) return yearPage(ctx, { message: "開催年の変更は、管理者のみ行えます", type: "error" });
+		if (!isAdmin(ctx.user)) return yearPage(ctx, { message: "開催年の変更は管理者のみ行えます", type: "error" });
 		const parsed = yearInput.safeParse({ year: Number(input.values?.year) });
-		if (!parsed.success || parsed.data.year === undefined) return yearPage(ctx, { message: `${FIRST_YEAR} 以上の年を入力してください`, type: "error" });
+		if (!parsed.success || parsed.data.year === undefined) return yearPage(ctx, { message: `${FIRST_YEAR}年以降の年を入力してください`, type: "error" });
 		await ctx.settings.set("currentYear", parsed.data.year);
-		return yearPage(ctx, { message: `開催年を ${parsed.data.year}年に変更しました`, type: "success" });
+		return yearPage(ctx, { message: `開催年を${parsed.data.year}年に変更しました`, type: "success" });
 	}
 	return input.page === "/year" ? yearPage(ctx) : pastPage(ctx);
 }

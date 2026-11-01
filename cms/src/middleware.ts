@@ -20,7 +20,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const role = context.locals.user?.role ?? 0;
 	// MCP の要求の中身（呼ぶ道具の名前）を読んで一部だけ断る方法は採らない。複数の要求をまとめる形や slug での指定まで追うことになり、EmDash を上げたときに壊れやすいため
 	if (pathname === "/_emdash/api/mcp" && context.locals.user && role < ADMIN) {
-		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "MCP は、管理者のみ利用できます" } }, { status: 403 });
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "MCP は管理者のみ利用できます" } }, { status: 403 });
 	}
 	const revision = context.request.method === "POST" ? REVISION_RESTORE.exec(pathname) : null;
 	if (revision && role < ADMIN) {
@@ -39,7 +39,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const content = CONTENT_API.exec(pathname);
 	// 複製の後に年を開催年へ直す方法は採らない。複製は保存のフックを通らず、写った前の年の下書きを実行委員が直せなくなるため
 	if (content && YEARLY.has(content[1]) && content[2]?.endsWith("/duplicate") && role < ADMIN) {
-		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "複製は、管理者のみ行えます" } }, { status: 403 });
+		return Response.json({ success: false, error: { code: "FORBIDDEN", message: "複製は管理者のみ行えます" } }, { status: 403 });
 	}
 	// プラグインの content:beforeDelete で断る方法は採らない。削除のフックには操作した人が渡らず、管理者の削除まで断ることになるため。復元にはフックが無い
 	const sub = content?.[2] ?? "";
