@@ -24,26 +24,60 @@ async function guardPublish(event: { collection: string; content: Record<string,
 	if (yearOf(event.content) !== (await currentYear())) return { cancel: true as const, reason: PAST_MESSAGE };
 }
 
-const PAST_LIMIT = 100;
+const jst = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", ...options });
+const dayTime = jst({ month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const time = jst({ hour: "2-digit", minute: "2-digit" });
+const STATUS: Record<string, string> = { published: "公開", draft: "下書き", scheduled: "予約" };
 
-// shortcut: コレクションごとに新しい順の 100 件まで。過去の開催のデータが増えて足りなくなったら、年を選んでページを送る形にする
-async function pastPage(ctx: PluginContext) {
+const nameOf = (data: Record<string, unknown>) =>
+	typeof data.starts_at === "string" ? `${dayTime.format(new Date(data.starts_at))}〜${typeof data.ends_at === "string" ? time.format(new Date(data.ends_at)) : ""}` : String(data.title ?? "");
+
+async function listAll(ctx: PluginContext, collection: string) {
+	const items = [];
+	let cursor: string | undefined;
+	do {
+		const page = await ctx.content!.list(collection, { limit: 100, cursor });
+		items.push(...page.items);
+		cursor = page.hasMore ? page.cursor : undefined;
+	} while (cursor);
+	return items;
+}
+
+async function yearsPage(ctx: PluginContext) {
 	const year = await currentYear();
-	const blocks: unknown[] = [
-		{ type: "header", text: "過去の開催" },
-		{ type: "context", text: `開催年（${year}年）より前のデータです。参考として保存しているため、実行委員は閲覧のみ行えます。編集と削除は管理者のみ行えます。` },
-	];
-	for (const [collection, label] of Object.entries(LABELS)) {
-		const { items } = await ctx.content!.list(collection, { limit: PAST_LIMIT, orderBy: { year: "desc" }, where: { fieldFilters: { year: { lt: year } } } });
-		blocks.push({ type: "header", text: label });
-		if (!items.length) blocks.push({ type: "context", text: "データはありません" });
-		for (const item of items) {
+	const byYear = new Map<number, Map<string, unknown[]>>();
+	for (const [collection] of Object.entries(LABELS)) {
+		for (const item of await listAll(ctx, collection)) {
 			const data = item.data as Record<string, unknown>;
-			const name = String(data.title ?? data.starts_at ?? item.slug ?? item.id);
-			blocks.push({ type: "section", text: `${data.year}年　${name}`, accessory: { type: "link", label: "開く", target: { kind: "content", collection, id: item.id } } });
+			const y = Number(data.year);
+			if (!byYear.has(y)) byYear.set(y, new Map());
+			const rows = byYear.get(y)!;
+			if (!rows.has(collection)) rows.set(collection, []);
+			rows.get(collection)!.push({ name: nameOf(data), status: STATUS[item.status] ?? item.status, updated: item.updatedAt, open: { type: "link", label: "開く", target: { kind: "content", collection, id: item.id } } });
 		}
 	}
-	return { blocks };
+	if (!byYear.has(year)) byYear.set(year, new Map());
+	const years = [...byYear.keys()].sort((a, b) => b - a);
+	const panels = years.map((y) => ({
+		label: y === year ? `${y}年（開催年）` : `${y}年`,
+		blocks: Object.entries(LABELS).flatMap(([collection, label]) => {
+			const rows = byYear.get(y)!.get(collection);
+			return rows
+				? [
+						{ type: "header", text: label },
+						{ type: "table", page_action_id: "years", columns: [{ key: "name", label: collection === "slots" ? "時刻" : "名前" }, { key: "status", label: "状態", format: "badge" }, { key: "updated", label: "更新", format: "relative_time" }, { key: "open", label: "", format: "element" }], rows },
+					]
+				: [];
+		}),
+	}));
+	for (const panel of panels) if (!panel.blocks.length) panel.blocks.push({ type: "context", text: "データはありません" });
+	return {
+		blocks: [
+			{ type: "header", text: "開催年ごとのデータ" },
+			{ type: "context", text: `すべての年のデータを、年ごとに表示します。開催年（${year}年）より前のデータは、参考として保存しているため、実行委員は閲覧のみ行えます。編集と削除は管理者のみ行えます。` },
+			{ type: "tab", panels, default_tab: years.indexOf(year) },
+		],
+	};
 }
 
 const YEAR_GROUP = "イベント設定";
@@ -77,7 +111,7 @@ async function adminRoute(ctx: RouteContext) {
 		await ctx.settings.set("currentYear", parsed.data.year);
 		return yearPage(ctx, { message: `開催年を${parsed.data.year}年に変更しました`, type: "success" });
 	}
-	return input.page === "/year" ? yearPage(ctx) : pastPage(ctx);
+	return input.page === "/year" ? yearPage(ctx) : yearsPage(ctx);
 }
 
 export function createPlugin() {
@@ -110,7 +144,7 @@ export function createPlugin() {
 			// settingsSchema（プラグインの設定の画面）にも置く方法は採らない。開催年を変える画面が2つになり、プラグインの一覧の奥にあって見つけにくいため
 			pages: [
 				{ path: "/year", label: "開催年", icon: "calendar", group: YEAR_GROUP },
-				{ path: "/past", label: "過去の開催", icon: "history" },
+				{ path: "/past", label: "開催年ごとのデータ", icon: "history" },
 			],
 		},
 		hooks: {
