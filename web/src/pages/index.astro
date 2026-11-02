@@ -41,7 +41,7 @@ const STEP = 5 * 60_000;
 const scheduleStart = Math.floor(Math.min(...scheduleRows.map((s) => s.startsAt.getTime())) / HOUR) * HOUR;
 const scheduleEnd = Math.ceil(Math.max(...scheduleRows.map((s) => s.endsAt.getTime())) / HOUR) * HOUR;
 const rowOf = (d: Date) => Math.round((d.getTime() - scheduleStart) / STEP) + 1;
-const linesOf = (s: { startsAt: Date; endsAt: Date }) => Math.max(3, Math.floor((rowOf(s.endsAt) - rowOf(s.startsAt) - 2.25) / 1.4));
+const linesOf = (s: { startsAt: Date; endsAt: Date }) => Math.max(3, Math.floor((rowOf(s.endsAt) - rowOf(s.startsAt) - 2.5) / 1.6));
 const scheduleStages = [...new Set(scheduleRows.map((s) => s.stage))];
 const scheduleHours = scheduleRows.length ? Array.from({ length: (scheduleEnd - scheduleStart) / HOUR + 1 }, (_, i) => new Date(scheduleStart + i * HOUR)) : [];
 
