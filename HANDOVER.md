@@ -99,7 +99,7 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    1. （済み、2026-11-01）favicon は「まち」「ぶん」の 2×2（user が選んだ）。
    2. （済み、2026-11-01）PR #26 で `preview` に取り込んだ。Preview で、favicon・アイコン・共有の画像・sitemap・robots.txt が 200 で返り、`noindex` が入ることを確かめた。robots.txt は、Cloudflare の content signal の後ろに自前の行が続く。
    3. `preview` を `main` に取り込み、本番で設計の「本番に入れた後に確かめること」を行う。イラストの直し（PR #25）も一緒に本番に入るので、本番で PageSpeed を測り、#3 を閉じる。
-      - （2026-11-02、PR #46）`main` に取り込んだ。本番の PageSpeed で「Improve image delivery」がモバイル・デスクトップとも 0 件になり、#3 を閉じた。点はモバイル 85（FCP 0.8s・LCP 4.1s）、デスクトップ 98。設計の「本番に入れた後に確かめること」と、本番の CMS の一度きりの変更（19 の手順 1〜6）は、まだ行っていない。
+      - （2026-11-02、PR #46）`main` に取り込んだ。本番の PageSpeed で「Improve image delivery」がモバイル・デスクトップとも 0 件になり、#3 を閉じた。点はモバイル 85（FCP 0.8s・LCP 4.1s）、デスクトップ 98。設計の「本番に入れた後に確かめること」のうち、favicon・canonical・`noindex`・sitemap・robots.txt は同じ日に curl で確かめた。SNS のカード（Facebook の Sharing Debugger・LINE、user の操作が要る）と、PageSpeed の SEO・ベストプラクティスの点は、まだ確かめていない。
 18. （2026-11-01、`feat/admin-guard`）実行委員（Editor）は開催年の中身だけを扱い、開催年・カテゴリ・ステージと過去の開催のデータは変えられないようにした（ADR 0008）。プラグイン `cms/src/plugins/admin-guard.ts` と `cms/src/middleware.ts`。
    - 手元で、画面から実行委員と管理者の操作を確かめた。項目と結果は `docs/notes/admin-guard-checks.md`。EmDash を上げたときは、これを流す。
    - 絞り込みは `next()` に URL や Request を渡しても EmDash に届かなかった（一覧の API が `context.url` を読む）。`context.url` に `fieldFilters` を足している。
@@ -126,6 +126,9 @@ EmDash を入力の場所（管理画面と編集用の鍵のフォーム）に�
    - MCP: Claude Code には、Preview の管理者の token（`claude-code-preview`）を `claude mcp add --scope local machibun-cms-preview` で、本番の管理者の token（`claude-code-prod`）を `machibun-cms-prod` で登録した（`~/.claude.json`、repo には入らない）。本番の token の権限は、コンテンツ・メディア・スキーマの読み書きと、プラグインツール（admin-guard）だけ。Preview の Worker は Python の既定の User-Agent を Cloudflare の 1010 で弾くので、スクリプトから呼ぶときは User-Agent を付ける。
 
    - （2026-11-02）見本のデータは、名前の先頭に「【サンプル】」を付けた（管理画面と公開サイトで本物と見分けるため）。出展カテゴリはフード・ドリンク・雑貨・小物・ワークショップ、ステージはメインステージ・サブステージ、出演時間は開催日（11月14日）の 14〜18時にした。Preview の中身は全部消して（ゴミ箱からも）、この seed の見本 25 件を入れ直した。seed は空の DB にしか入らないので、参照の無い項目は MCP の `content_create`、参照のある項目（出展カテゴリ・出演者・ステージ）は REST の `POST /_emdash/api/content/<コレクション>` の `references` で入れ、MCP の `content_publish` で公開した（MCP の `content_create` は参照を受け付けない）。
+
+20. （2026-11-02、PR #51・#52）スケジュールの出演の枠を、灰色のカードに左の色線から、ステージ色を 10% 混ぜた地と上端のステージ色の線に変え、本番まで入れた（user が frontend-design の skill で頼んだ）。ステージ色は枠だけに使い、絞り込みのボタン・ステージ名・時刻は無彩色にした。全面をステージ色で塗る案と、時刻・見出し・ボタンにも色を付ける案は、user が派手すぎると判断した。
+   - 手元で Preview の CMS を読んでビルドするときは、`CMS_URL` と `CMS_TOKEN` を `docker compose exec -e` で渡し、`pnpm astro build --outDir .tt-dist` のように `web/` の中に出す。`/tmp` に出すと EXDEV（別のデバイスへの rename）で止まる。出したものは確認の後に消す。
 
 ## いまの状態
 
