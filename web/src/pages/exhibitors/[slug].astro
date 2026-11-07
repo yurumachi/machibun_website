@@ -52,7 +52,7 @@ const image = photos[0] && (await shareImage(photos[0]));
 
 			{photos.length > 0 && (
 				<ul class="detail__photos">
-					{photos.map((p) => <li><Image src={mediaUrl(p.image)} alt={p.image.alt ?? ""} width={960} height={720} /></li>)}
+					{photos.map((p) => <li><Image src={mediaUrl(p.image)} alt={p.image.alt ?? ""} width={960} height={960} fit="contain" /></li>)}
 				</ul>
 			)}
 
