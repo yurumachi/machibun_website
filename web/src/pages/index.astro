@@ -124,7 +124,10 @@ const nameSponsors = sponsors.filter((s) => !s.data.logo);
 						return (
 							<li class="card card--fun exhibitor">
 								{photo ? (
-									<Image class="exhibitor__photo" src={mediaUrl(photo)} alt="" width={800} height={600} />
+									<div class="exhibitor__photo">
+										<Image class="exhibitor__backdrop" src={mediaUrl(photo)} alt="" width={800} height={800} fit="contain" aria-hidden="true" />
+										<Image src={mediaUrl(photo)} alt="" width={800} height={800} fit="contain" />
+									</div>
 								) : (
 									<div class="exhibitor__photo exhibitor__photo--none" aria-hidden="true"></div>
 								)}
